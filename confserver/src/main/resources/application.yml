@@ -1,0 +1,15 @@
+server:
+  port: 8888
+spring:
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          searchLocations: file:///C:/ylong/workspace/IntelliJProjects/msproject/confserver/src/main/resources/config/licensingservice
+        git:
+          uri: https://github.com/longyg/config-repo
+          searchPaths: licensingservice, organizationservice
+          username:
+          password:
