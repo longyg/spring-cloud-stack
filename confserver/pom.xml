@@ -8,11 +8,9 @@
     <artifactId>confserver</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
-    <modules>
-        <module>../organization-service</module>
-    </modules>
 
     <name>confserver</name>
+
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -49,4 +47,25 @@
             <artifactId>spring-cloud-config-server</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.13</version>
+                <configuration>
+                    <baseImage>java</baseImage>
+                    <imageName>confserver</imageName>
+                    <resources>
+                        <rescource><!-- 将打包文件放入dockerDirectory指定的位置 -->
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </rescource>
+                    </resources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

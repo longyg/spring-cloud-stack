@@ -1,6 +1,0 @@
-com\longyg\license\config\ServiceConfig.class
-com\longyg\license\model\License.class
-com\longyg\license\controllers\LicenseController.class
-com\longyg\license\repository\LicenseRepository.class
-com\longyg\license\Application.class
-com\longyg\license\services\LicenseService.class
