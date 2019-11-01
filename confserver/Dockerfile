@@ -1,3 +1,4 @@
 FROM java:8
-ADD licensing-service-1.0-SNAPSHOT.jar app.jar
+ARG JAR_FILE
+ADD target/${JAR_FILE} app.jar
 ENTRYPOINT ["java", "-jar", "/app.jar"]
