@@ -12,4 +12,4 @@ spring:
           uri: https://github.com/longyg/config-repo
           searchPaths: licensingservice, organizationservice
           username: longyg
-          password: long290686
+          password:
