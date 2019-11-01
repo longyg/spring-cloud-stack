@@ -19,7 +19,10 @@ public class LicenseService {
 
     public License getLicense(String organizationId, String licenseId) {
         License license = licenseRepository.findByOrganizationIdAndLicenseId(organizationId, licenseId);
-        return license.withComment(config.getExampleProperty());
+        if (null != license) {
+            license.withComment(config.getExampleProperty());
+        }
+        return license;
     }
 
     public List<License> getLicenseByOrg(String organizationId) {
