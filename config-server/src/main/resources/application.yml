@@ -1,0 +1,11 @@
+server:
+  port: 8889
+spring:
+  profiles:
+    active: git
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/longyg/config-repo
+          searchPaths: account-service
