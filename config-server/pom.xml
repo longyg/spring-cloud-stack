@@ -70,11 +70,8 @@
                     </execution>
                 </executions>
                 <configuration>
-<!--                    <contextDirectory>${project.basedir}/src/main/docker</contextDirectory>-->
                     <repository>${docker.image.prefix}/${project.artifactId}</repository>
                     <tag>${project.version}</tag>
-<!--                    <username>longyonggang</username>-->
-<!--                    <password>long862906</password>-->
                     <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
                     <buildArgs>
                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
