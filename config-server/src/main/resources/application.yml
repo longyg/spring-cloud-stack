@@ -9,3 +9,5 @@ spring:
         git:
           uri: https://github.com/longyg/config-repo
           searchPaths: account-service
+        encrypt:
+          enabled: false
