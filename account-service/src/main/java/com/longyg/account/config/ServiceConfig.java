@@ -14,9 +14,6 @@ public class ServiceConfig {
     @Value("${config.accountType.default}")
     private String accountType;
 
-    @Value("${config.client.version}")
-    private String version;
-
     public String getVendor() {
         return vendor;
     }
@@ -31,13 +28,5 @@ public class ServiceConfig {
 
     public void setAccountType(String accountType) {
         this.accountType = accountType;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 }

@@ -2,12 +2,13 @@ server:
   port: 8889
 spring:
   profiles:
-    active: git
+    active: native
   cloud:
     config:
       server:
         git:
           uri: https://github.com/longyg/config-repo
-          searchPaths: account-service
-        encrypt:
-          enabled: false
+          searchPaths: account-service, score-service
+        native:
+          searchLocations: file:///C:/ylong/workspace/config-repo/account-service,
+                           file:///C:/ylong/workspace/config-repo/score-service
