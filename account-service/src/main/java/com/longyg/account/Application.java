@@ -21,6 +21,6 @@ public class Application {
     @LoadBalanced
     @Bean
     public RestTemplate getRestTemplate() {
-    return new RestTemplate();
-}
+        return new RestTemplate();
+    }
 }
