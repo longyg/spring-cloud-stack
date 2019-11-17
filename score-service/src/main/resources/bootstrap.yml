@@ -12,7 +12,7 @@ eureka:
     preferIpAddress: true
   client:
     registerWithEureka: true
-    fetchRegistry: true
+    fetchRegistry: false
     serviceUri:
       defaultZone: http://localhost:8761/eureka
 
