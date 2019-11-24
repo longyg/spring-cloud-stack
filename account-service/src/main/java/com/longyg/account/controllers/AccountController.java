@@ -2,13 +2,18 @@ package com.longyg.account.controllers;
 
 import com.longyg.account.model.Account;
 import com.longyg.account.model.AccountInfo;
+import com.longyg.account.model.Score;
 import com.longyg.account.services.AccountService;
+import com.longyg.account.utils.UserContextHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/v1/account")
 public class AccountController {
+    private static final Logger logger = LoggerFactory.getLogger(AccountController.class.getName());
 
     @Autowired
     private AccountService accountService;
@@ -26,7 +31,21 @@ public class AccountController {
     @RequestMapping(value = "/{accountId}/{clientType}", method = RequestMethod.GET)
     public AccountInfo getAccountInfo(@PathVariable String accountId,
                                       @PathVariable String clientType) {
-        return accountService.getAccountInfo(accountId, clientType);
+        logger.info("===> AccountController Correlation id: " + UserContextHolder.getContext().getCorrelationId());
+
+        Account account = accountService.getAccount(accountId);
+        AccountInfo ai = null;
+        if (null != account) {
+            ai = new AccountInfo();
+            ai.setAccountId(account.getAccountId());
+            ai.setAccountName(account.getAccountName());
+            ai.setAccountType(account.getAccountType());
+            ai.setPassword(account.getPassword());
+
+            Score score = accountService.getScore(accountId, clientType);
+            ai.setScore(score);
+        }
+        return ai;
     }
 
     @RequestMapping(method = RequestMethod.POST)

@@ -8,6 +8,8 @@ import com.longyg.account.model.Account;
 import com.longyg.account.model.AccountInfo;
 import com.longyg.account.model.Score;
 import com.longyg.account.repository.AccountRepository;
+import com.longyg.account.utils.UserContextHolder;
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.slf4j.Logger;
@@ -15,10 +17,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Service
+@DefaultProperties(
+    commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
+            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "20"),
+            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
+            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"),
+            @HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "10000"),
+            @HystrixProperty(name = "metrics.rollingStats.numBuckets", value = "10"),
+    },
+    threadPoolKey = "accountDbAccessPool",
+    threadPoolProperties = {
+            @HystrixProperty(name = "coreSize", value = "30"),
+            @HystrixProperty(name = "maxQueueSize", value = "10")
+    }
+)
 public class AccountService {
     private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
     @Autowired
@@ -36,29 +52,33 @@ public class AccountService {
     @Autowired
     private ScoreFeignClient scoreFeignClient;
 
+    @HystrixCommand
     public Iterable<Account> getAccounts() {
+        randomlyRunLong();
+        logger.info("===> AccountService.getAccounts Correlation id: " + UserContextHolder.getContext().getCorrelationId());
         return accountRepository.findAll();
     }
 
     @HystrixCommand(
-        fallbackMethod = "buildFallbackAccount",
-        commandProperties = {
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000")
-        }
+        fallbackMethod = "buildFallbackAccount"
     )
     public Account getAccount(String accountId) {
         randomlyRunLong();
-
+        logger.info("===> AccountService.getAccount Correlation id: " + UserContextHolder.getContext().getCorrelationId());
         Account account = accountRepository.findByAccountId(accountId);
         return account;
     }
 
+    @HystrixCommand
     public void saveAccount(Account account) {
+        randomlyRunLong();
+        logger.info("===> AccountService.getAccount Correlation id: " + UserContextHolder.getContext().getCorrelationId());
         account.setAccountId(UUID.randomUUID().toString());
         account.setAccountType(config.getAccountType());
         accountRepository.save(account);
     }
 
+    @HystrixCommand
     public void deleteAccount(String accountId) {
         accountRepository.deleteById(accountId);
     }
@@ -67,25 +87,13 @@ public class AccountService {
         return config.getVendor();
     }
 
-    public AccountInfo getAccountInfo(String accountId, String clientType) {
-        Account account = accountRepository.findByAccountId(accountId);
-        AccountInfo ai = null;
-        if (null != account) {
-            ai = new AccountInfo();
-            ai.setAccountId(account.getAccountId());
-            ai.setAccountName(account.getAccountName());
-            ai.setAccountType(account.getAccountType());
-            ai.setPassword(account.getPassword());
-
-            Score score = getScore(accountId, clientType);
-            ai.setScore(score);
-        }
-
-        return ai;
-    }
-
-    @HystrixCommand
-    private Score getScore(String accountId, String clientType) {
+    @HystrixCommand(
+        fallbackMethod = "buildFallbackScore",
+        threadPoolKey = "scoreAccessPool"
+    )
+    public Score getScore(String accountId, String clientType) {
+        randomlyRunLong();
+        logger.info("===> AccountService.getScore Correlation id: " + UserContextHolder.getContext().getCorrelationId());
         Score score = null;
         switch (clientType) {
             case "discovery-client":
@@ -122,6 +130,17 @@ public class AccountService {
         }
     }
 
+    private Iterable<Account> buildFallbackAccounts() {
+        Account account = new Account();
+        account.setAccountId("-1");
+        account.setAccountName("dummy");
+        account.setAccountType("dummy");
+        account.setPassword("dummy");
+        List<Account> list =  new ArrayList<>();
+        list.add(account);
+        return list;
+    }
+
     private Account buildFallbackAccount(String accountId) {
         Account account = new Account();
         account.setAccountId("-1");
@@ -129,5 +148,13 @@ public class AccountService {
         account.setAccountType("dummy");
         account.setPassword("dummy");
         return account;
+    }
+
+    private Score buildFallbackScore(String accountId, String clientType) {
+        Score score = new Score();
+        score.setLastReceived(-1);
+        score.setLastReceiveTime(null);
+        score.setTotal(-1);
+        return score;
     }
 }
