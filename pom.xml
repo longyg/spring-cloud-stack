@@ -83,5 +83,6 @@
         <module>account-service</module>
         <module>eureka-server</module>
         <module>score-service</module>
+        <module>api-gateway</module>
     </modules>
 </project>
