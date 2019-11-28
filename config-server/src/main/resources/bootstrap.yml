@@ -3,4 +3,4 @@ spring:
     config:
       server:
         encrypt:
-          enabled: false
+          enabled: false # 禁用服务端解密

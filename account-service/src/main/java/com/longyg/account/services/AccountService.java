@@ -5,7 +5,6 @@ import com.longyg.account.clients.ScoreFeignClient;
 import com.longyg.account.clients.ScoreRestTemplateClient;
 import com.longyg.account.config.ServiceConfig;
 import com.longyg.account.model.Account;
-import com.longyg.account.model.AccountInfo;
 import com.longyg.account.model.Score;
 import com.longyg.account.repository.AccountRepository;
 import com.longyg.account.utils.UserContextHolder;
@@ -20,6 +19,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+
+// 设置 Hystrix 的默认配置
 @DefaultProperties(
     commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
@@ -59,8 +60,9 @@ public class AccountService {
         return accountRepository.findAll();
     }
 
+    // 使用 Hystrix 包装访问数据库的方法
     @HystrixCommand(
-        fallbackMethod = "buildFallbackAccount"
+        fallbackMethod = "buildFallbackAccount"  // 指定后备方法，当调用本方法失败时，调用该后备方法
     )
     public Account getAccount(String accountId) {
         randomlyRunLong();
@@ -69,6 +71,7 @@ public class AccountService {
         return account;
     }
 
+    // 使用 Hystrix 包装访问数据库的方法
     @HystrixCommand
     public void saveAccount(Account account) {
         randomlyRunLong();
@@ -78,6 +81,7 @@ public class AccountService {
         accountRepository.save(account);
     }
 
+    // 使用 Hystrix 包装访问数据库的方法
     @HystrixCommand
     public void deleteAccount(String accountId) {
         accountRepository.deleteById(accountId);
@@ -87,9 +91,10 @@ public class AccountService {
         return config.getVendor();
     }
 
+    // 使用 Hystrix 包装调用积分服务的方法
     @HystrixCommand(
-        fallbackMethod = "buildFallbackScore",
-        threadPoolKey = "scoreAccessPool"
+        fallbackMethod = "buildFallbackScore", // 指定后备方法，当调用本方法失败时，调用该后备方法
+        threadPoolKey = "scoreAccessPool"  // 在单独的线程池中调用积分服务
     )
     public Score getScore(String accountId, String clientType) {
         randomlyRunLong();

@@ -16,6 +16,7 @@
     <name>config-server</name>
 
     <dependencies>
+        <!-- 实现 config server 的依赖 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-server</artifactId>

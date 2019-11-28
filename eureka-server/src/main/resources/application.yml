@@ -3,7 +3,7 @@ server:
 
 eureka:
   client:
-    registerWithEureka: false
-    fetchRegistry: false
+    registerWithEureka: false  # 不注册自己
+    fetchRegistry: false  # 不从自己拉取注册信息
   server:
     waitTimeInMsWhenSyncEmpty: 5

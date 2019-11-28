@@ -1,15 +1,31 @@
 server:
   port: 5555
 
+spring:
+  application:
+    name: api-gateway
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "routes"  # 开启 /actuator/routes 端点，可以访问该端点查看路由信息
+
 eureka:
   instance:
     preferIpAddress: true
   client:
-    registerWithEureka: true
-    fetchRegistry: false
+    registerWithEureka: false  # true 或 false 均可，取决于是否希望将它注册到 eureka server
+    fetchRegistry: true # 必须为true，否则路由失败： com.netflix.client.ClientException: Load balancer does not have available server for client
     serviceUri:
       defaultZone: http://localhost:8761/eureka
 
 zuul:
-  routes:
-    score-service: /score/**
+  add-host-header: true # 设置为true重定向是会添加host请求头
+  ignored-services: score-service # 关闭默认路由配置
+  routes: # 配置路由规则
+    score-service:
+      path: /scoreService/**  # 将来自/scoreService/**的请求路由自 score-service 服务
+    account-service:  # 静态路由，路由不受 Eureka 管理的服务，直接路由到指定URL
+      path: /accountService/**
+      url: http://localhost:8082

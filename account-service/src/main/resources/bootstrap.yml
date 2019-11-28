@@ -11,7 +11,7 @@ eureka:
   instance:
     preferIpAddress: true
   client:
-    registerWithEureka: false
-    fetchRegistry: true
+    registerWithEureka: false  # true 或 false 均可，取决于是否希望将本服务注册到 Eureka Server
+    fetchRegistry: true # 必须为true，才能从 Eureka Server 拉取服务注册信息
     serviceUri:
       defaultZone: http://localhost:8761/eureka

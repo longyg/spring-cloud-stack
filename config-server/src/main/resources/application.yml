@@ -2,13 +2,13 @@ server:
   port: 8889
 spring:
   profiles:
-    active: native
+    active: native  # 使用本地存储文件的方式
   cloud:
     config:
       server:
-        git:
+        git:  # 使用 Git 存储配置文件，需指定git url和路径
           uri: https://github.com/longyg/config-repo
           searchPaths: account-service, score-service
-        native:
+        native: # 在本地存储配置文件，需指定本地路径
           searchLocations: file:///C:/ylong/workspace/config-repo/account-service,
                            file:///C:/ylong/workspace/config-repo/score-service
