@@ -122,6 +122,9 @@ public class AccountService {
         return score;
     }
 
+    /**
+     * 测试辅助方法，模拟调用服务超时
+     */
     private void randomlyRunLong() {
         Random rand = new Random();
         int randomNum = rand.nextInt((3 - 1) + 1) + 1;
@@ -138,6 +141,10 @@ public class AccountService {
         }
     }
 
+    /**
+     * 访问数据库查询所有账户失败时的后备方法
+     * @return
+     */
     private Iterable<Account> buildFallbackAccounts() {
         Account account = new Account();
         account.setAccountId("-1");
@@ -149,6 +156,11 @@ public class AccountService {
         return list;
     }
 
+    /**
+     * 访问数据库获取指定账户信息失败的后备方法
+     * @param accountId
+     * @return
+     */
     private Account buildFallbackAccount(String accountId) {
         Account account = new Account();
         account.setAccountId("-1");
@@ -158,6 +170,12 @@ public class AccountService {
         return account;
     }
 
+    /**
+     * 调用积分服务失败的后备方法
+     * @param accountId
+     * @param clientType
+     * @return
+     */
     private Score buildFallbackScore(String accountId, String clientType) {
         Score score = new Score();
         score.setLastReceived(-1);

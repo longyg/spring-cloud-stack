@@ -1,4 +1,4 @@
-package com.longyg.account.utils;
+package com.longyg.score.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * Http 请求过滤器，从请求 Header 中获取关联ID，并保存
+ * Http 请求过滤器，从请求 Header 中获取关联ID
  */
 @Component
 public class UserContextFilter implements Filter {
@@ -22,11 +22,7 @@ public class UserContextFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
 
-        UserContextHolder.getContext().setCorrelationId(request.getHeader((UserContext.CORRELATION_ID)));
-        UserContextHolder.getContext().setUserId(request.getHeader(UserContext.USER_ID));
-        UserContextHolder.getContext().setAuthToken(request.getHeader(UserContext.AUTH_TOKEN));
-
-        logger.info("===> UserContext Filter Correlation id: " + UserContextHolder.getContext().getCorrelationId());
+        logger.info("===> UserContext Filter Correlation id: " + request.getHeader(UserContext.CORRELATION_ID));
 
         filterChain.doFilter(request, servletResponse);
     }
