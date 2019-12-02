@@ -8,7 +8,8 @@ spring:
       server:
         git:  # 使用 Git 存储配置文件，需指定git url和路径
           uri: https://github.com/longyg/config-repo
-          searchPaths: account-service, score-service
+          searchPaths: account-service, score-service, api-gateway
         native: # 在本地存储配置文件，需指定本地路径
           searchLocations: file:///C:/ylong/workspace/config-repo/account-service,
-                           file:///C:/ylong/workspace/config-repo/score-service
+                           file:///C:/ylong/workspace/config-repo/score-service,
+                           file:///C:/ylong/workspace/config-repo/api-gateway

@@ -23,17 +23,17 @@ import java.util.*;
 // 设置 Hystrix 的默认配置
 @DefaultProperties(
     commandProperties = {
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
-            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "20"),
-            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
-            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"),
-            @HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "10000"),
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"), // 超时时间
+            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "20"), // 一个窗口时间内最小调用次数
+            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"), // 调用故障百分比阈值
+            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"), // 断路器跳闸后，Hystrix 尝试服务调用的间隔时间
+            @HystrixProperty(name = "metrics.rollingStats.timeInMilliseconds", value = "10000"), // 收集和监控服务调用信息的滚动窗口时长
             @HystrixProperty(name = "metrics.rollingStats.numBuckets", value = "10"),
     },
     threadPoolKey = "accountDbAccessPool",
     threadPoolProperties = {
-            @HystrixProperty(name = "coreSize", value = "30"),
-            @HystrixProperty(name = "maxQueueSize", value = "10")
+            @HystrixProperty(name = "coreSize", value = "30"), // 线程池中线程最大数量
+            @HystrixProperty(name = "maxQueueSize", value = "10") // 请求队列大小
     }
 )
 public class AccountService {
@@ -62,7 +62,10 @@ public class AccountService {
 
     // 使用 Hystrix 包装访问数据库的方法
     @HystrixCommand(
-        fallbackMethod = "buildFallbackAccount"  // 指定后备方法，当调用本方法失败时，调用该后备方法
+        fallbackMethod = "buildFallbackAccount",  // 指定后备方法，当调用本方法失败时，调用该后备方法
+        commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
+        }
     )
     public Account getAccount(String accountId) {
         randomlyRunLong();
