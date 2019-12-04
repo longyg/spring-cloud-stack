@@ -4,12 +4,13 @@ import com.longyg.account.model.Score;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 public class ScoreRestTemplateClient {
-    private static final String SCORE_SERVICE_URI = "http://score-service/v1/score/{accountId}";
+    private static final String SCORE_SERVICE_URI = "http://api-gateway/api/score-svc/v1/score/{accountId}";
 
     @Autowired
     private RestTemplate restTemplate;

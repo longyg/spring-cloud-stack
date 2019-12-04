@@ -15,7 +15,7 @@ eureka:
   instance:
     preferIpAddress: true
   client:
-    registerWithEureka: false  # true 或 false 均可，取决于是否希望将它注册到 eureka server
+    registerWithEureka: true  # true 或 false 均可，取决于是否希望将它注册到 eureka server
     fetchRegistry: true # 必须为true，否则路由失败： com.netflix.client.ClientException: Load balancer does not have available server for client
     serviceUri:
       defaultZone: http://localhost:8761/eureka

@@ -9,3 +9,12 @@ management:
   endpoint:
     health:
       show-details: always
+
+security:
+  oauth2:
+    resource:
+      userInfoUri: http://localhost:8901/user
+
+logging:
+  level:
+    org.springframework: DEBUG
