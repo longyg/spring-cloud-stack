@@ -14,6 +14,13 @@ security:
   oauth2:
     resource:
       userInfoUri: http://localhost:8901/user
+    client:
+      clientId: msclient
+      clientSecret: msclient
+      scope: all
+      grantType: password
+      accessTokenUri: http://localhost:8901/oauth/access_token
+      userAuthorizationUri: http://localhost:8901/oauth/authorize
 
 logging:
   level:
