@@ -25,6 +25,7 @@ public class StrategyConfiguration {
         HystrixCommandExecutionHook commandExecutionHook = HystrixPlugins.getInstance().getCommandExecutionHook();
         HystrixPlugins.reset();
 
+        // 注册自定义的 HystrixConcurrencyStrategy
         HystrixPlugins.getInstance().registerConcurrencyStrategy(new UserContextStrategy(strategy));
         HystrixPlugins.getInstance().registerEventNotifier(eventNotifier);
         HystrixPlugins.getInstance().registerMetricsPublisher(metricsPublisher);

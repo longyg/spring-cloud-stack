@@ -56,7 +56,6 @@ public class AccountService {
     @HystrixCommand
     public Iterable<Account> getAccounts() {
         randomlyRunLong();
-        logger.info("===> AccountService.getAccounts Correlation id: " + UserContextHolder.getContext().getCorrelationId());
         return accountRepository.findAll();
     }
 
@@ -69,17 +68,14 @@ public class AccountService {
     )
     public Account getAccount(String accountId) {
         randomlyRunLong();
-        logger.info("===> AccountService.getAccount Correlation id: " + UserContextHolder.getContext().getCorrelationId());
+        logger.info("AccountService.getAccount Correlation ID: " + UserContextHolder.getContext().getCorrelationId());
         Account account = accountRepository.findByAccountId(accountId);
         return account;
     }
 
     // 使用 Hystrix 包装访问数据库的方法
     @HystrixCommand
-    public void saveAccount(Account account) {
-        randomlyRunLong();
-        logger.info("===> AccountService.getAccount Correlation id: " + UserContextHolder.getContext().getCorrelationId());
-        account.setAccountId(UUID.randomUUID().toString());
+    public void saveAccount(Account account) {account.setAccountId(UUID.randomUUID().toString());
         account.setAccountType(config.getAccountType());
         accountRepository.save(account);
     }
@@ -101,7 +97,7 @@ public class AccountService {
     )
     public Score getScore(String accountId, String clientType) {
         randomlyRunLong();
-        logger.info("===> AccountService.getScore Correlation id: " + UserContextHolder.getContext().getCorrelationId());
+        logger.info("AccountService.getScore Correlation ID: " + UserContextHolder.getContext().getCorrelationId());
         Score score = null;
         switch (clientType) {
             case "discovery-client":

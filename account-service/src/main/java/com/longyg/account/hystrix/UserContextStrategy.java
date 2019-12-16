@@ -2,7 +2,6 @@ package com.longyg.account.hystrix;
 
 import com.longyg.account.utils.UserContextHolder;
 import com.netflix.hystrix.HystrixThreadPoolKey;
-import com.netflix.hystrix.HystrixThreadPoolProperties;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariable;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableLifecycle;
@@ -45,10 +44,11 @@ public class UserContextStrategy extends HystrixConcurrencyStrategy {
 
     @Override
     public <T> Callable<T> wrapCallable(Callable<T> callable) {
+        // 包装自定义的callable
         return null != strategy ? strategy.wrapCallable(
-                DelegatingUserContextCallable.create(callable, UserContextHolder.getContext())
+                UserContextCallable.create(callable, UserContextHolder.getContext())
         ) : super.wrapCallable(
-                DelegatingUserContextCallable.create(callable, UserContextHolder.getContext())
+                UserContextCallable.create(callable, UserContextHolder.getContext())
         );
     }
 }

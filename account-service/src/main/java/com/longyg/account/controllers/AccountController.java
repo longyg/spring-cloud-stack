@@ -31,7 +31,7 @@ public class AccountController {
     @RequestMapping(value = "/{accountId}/{clientType}", method = RequestMethod.GET)
     public AccountInfo getAccountInfo(@PathVariable String accountId,
                                       @PathVariable String clientType) {
-        logger.info("===> AccountController Correlation id: " + UserContextHolder.getContext().getCorrelationId());
+        logger.info("AccountController.getAccountInfo Correlation ID: " + UserContextHolder.getContext().getCorrelationId());
 
         Account account = accountService.getAccount(accountId);
         AccountInfo ai = null;
