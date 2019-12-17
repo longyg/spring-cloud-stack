@@ -107,5 +107,6 @@
         <module>eureka-server</module>
         <module>api-gateway</module>
         <module>auth-server</module>
+        <module>user-mgmt-service</module>
     </modules>
 </project>
