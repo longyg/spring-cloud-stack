@@ -1,0 +1,27 @@
+server:
+  port: 8901
+
+spring:
+  application:
+    name: auth-server
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true  # true 或 false 均可，取决于是否希望将它注册到 eureka server
+    fetchRegistry: false
+    serviceUri:
+      defaultZone: http://localhost:8761/eureka
+
+security:
+  oauth2:
+    client:
+      clientId: spring-cloud-stack-admin
+      clientSecret: 123456
+      scope: all
+      registeredRedirectUri: http://localhost:3000/
+
+logging:
+  level:
+    org.springframework: DEBUG

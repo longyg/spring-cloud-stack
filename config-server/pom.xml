@@ -5,15 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.longyg</groupId>
-        <artifactId>msproject</artifactId>
+        <groupId>com.yglong</groupId>
+        <artifactId>spring-cloud-stack</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>config-server</artifactId>
     <packaging>jar</packaging>
 
-    <name>config-server</name>
+    <name>Configuration Server</name>
 
     <dependencies>
         <!-- 实现 config server 的依赖 -->
@@ -21,7 +21,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-server</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>

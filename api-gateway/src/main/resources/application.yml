@@ -1,5 +1,5 @@
 server:
-  port: 5555
+  port: 8080
 
 spring:
   application:
@@ -9,7 +9,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: "routes, refresh"  # 开启 /actuator/routes 端点，可以访问该端点查看路由信息
+        include: "*"  # 开启 /actuator/routes 端点，可以访问该端点查看路由信息
 
 eureka:
   instance:

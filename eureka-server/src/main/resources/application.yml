@@ -6,4 +6,4 @@ eureka:
     registerWithEureka: false  # 不注册自己
     fetchRegistry: false  # 不从自己拉取注册信息
   server:
-    waitTimeInMsWhenSyncEmpty: 5
+    waitTimeInMsWhenSyncEmpty: 0  # set as 0 for testing only
