@@ -1,9 +1,7 @@
 package com.yglong.user.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -26,7 +24,6 @@ public class User {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinTable(name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})

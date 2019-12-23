@@ -30,3 +30,7 @@ eureka:
 #    account-service:  # 静态路由，可以路由到不受 Eureka 管理的服务，直接路由到指定URL
 #      path: /accountService/**
 #      url: http://localhost:8082
+
+logging:
+  level:
+    org.springframework: DEBUG

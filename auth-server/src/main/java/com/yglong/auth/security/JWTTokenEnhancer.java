@@ -1,5 +1,6 @@
 package com.yglong.auth.security;
 
+import com.yglong.auth.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
@@ -18,14 +19,12 @@ public class JWTTokenEnhancer implements TokenEnhancer {
     public OAuth2AccessToken enhance(OAuth2AccessToken oAuth2AccessToken,
                                      OAuth2Authentication oAuth2Authentication) {
         Map<String, Object> additionalInfo = new HashMap<>();
-        String userId = getUserId(oAuth2Authentication.getName());
-        additionalInfo.put("userId", userId);
-        additionalInfo.put("testInfo", "hello world");
+        Map<String, Object> userInfo = new HashMap<>();
+        User user = (User) oAuth2Authentication.getPrincipal();
+        userInfo.put("name", user.getName());
+        userInfo.put("address", user.getAddress());
+        additionalInfo.put("userInfo", userInfo);
         ((DefaultOAuth2AccessToken) oAuth2AccessToken).setAdditionalInformation(additionalInfo);
         return oAuth2AccessToken;
-    }
-
-    private String getUserId(String name) {
-        return "ID of " + name + ": " + passwordEncoder.encode(name);
     }
 }

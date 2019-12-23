@@ -1,7 +1,9 @@
 package com.yglong.auth.security;
 
+import com.yglong.auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -32,19 +34,29 @@ public class JWTOauth2Config extends AuthorizationServerConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private DemoClientDetailsService demoClientDetailsService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
         tokenEnhancerChain.setTokenEnhancers(Arrays.asList(jwtTokenEnhancer, jwtAccessTokenConverter));
-        endpoints.tokenStore(tokenStore).tokenEnhancer(tokenEnhancerChain);
+        endpoints
+                .tokenStore(tokenStore)
+                .tokenEnhancer(tokenEnhancerChain)
+                .reuseRefreshTokens(false)
+                .authenticationManager(authenticationManager)
+                .userDetailsService(userService);
     }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                .withClient("msclient")
-                .secret(passwordEncoder.encode("msclient"))
-                .authorizedGrantTypes("refresh_token", "password", "client_credentials", "authorization_code")
-                .scopes("all");
+        clients.withClientDetails(demoClientDetailsService);
     }
 }

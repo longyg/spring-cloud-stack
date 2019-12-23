@@ -1,28 +1,15 @@
-package com.yglong.user.model;
+package com.yglong.auth.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.*;
 import java.util.Set;
 
-@Entity
-@Table(name = "role")
 public class Role {
-    public Role() {
 
-    }
-    public Role(String name) {
-        this.name = name;
-    }
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(updatable = false, nullable = false)
     private Long id;
 
-    @Column(unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
     @JsonIgnore
     private Set<User> users;
 

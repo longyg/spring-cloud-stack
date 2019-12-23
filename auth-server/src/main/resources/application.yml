@@ -9,19 +9,21 @@ eureka:
   instance:
     preferIpAddress: true
   client:
-    registerWithEureka: true  # true 或 false 均可，取决于是否希望将它注册到 eureka server
-    fetchRegistry: false
+    registerWithEureka: true  # true 或 false 均可，取决于是否希望将它注册到 Eureka server
+    fetchRegistry: true  # 需要调用其他服务，所以需要从Eureka拉取服务注册信息
     serviceUri:
       defaultZone: http://localhost:8761/eureka
 
 security:
   oauth2:
     client:
-      clientId: spring-cloud-stack-admin
-      clientSecret: 123456
-      scope: all
-      registeredRedirectUri: http://localhost:3000/
+      demo-client:
+        clientId: demo-client
+        clientSecret: $2a$10$Bgu/e5jk2nXEPurvvPUcqugWv7pspiya.s9TAvTtbY6wtwjKl5qXq
+        scope: all
+        registeredRedirectUri: http://www.baidu.com
+        authorizedGrantTypes: authorization_code, refresh_token, password
 
 logging:
   level:
-    org.springframework: DEBUG
+    org.springframework.security: DEBUG
