@@ -1,6 +1,7 @@
 package com.yglong.zuul.security;
 
-import com.yglong.zuul.client.UserServiceRestClient;
+import com.yglong.zuul.client.UserServiceClient;
+import com.yglong.zuul.config.AuthConfig;
 import com.yglong.zuul.model.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,10 @@ import java.util.List;
 public class RoleBasedMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     @Autowired
-    private UserServiceRestClient userServiceRestClient;
+    private UserServiceClient userServiceClient;
+
+    @Autowired
+    private AuthConfig authConfig;
 
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -37,7 +41,7 @@ public class RoleBasedMetadataSource implements FilterInvocationSecurityMetadata
         }
 
         // 从数据库获取所有资源
-        List<Resource> allResources = userServiceRestClient.getAllResources();
+        List<Resource> allResources = userServiceClient.getAllResources();
         // 循环所有资源，找到与请求url相匹配的资源
         for (Resource resource : allResources) {
             // 如果找到与请求url相匹配的资源
@@ -53,7 +57,7 @@ public class RoleBasedMetadataSource implements FilterInvocationSecurityMetadata
     }
 
     private boolean isAnonymousAllowedUrl(String requestUrl) {
-        for (String url : SecurityConstants.ANONYMOUS_ALLOWED_URL) {
+        for (String url : authConfig.getAuthIgnoredUris()) {
             if (antPathMatcher.match(url, requestUrl)) {
                 return true;
             }

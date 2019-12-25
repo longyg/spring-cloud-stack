@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 @Component
 public class RoleBasedAccessDecisionManager implements AccessDecisionManager {
@@ -32,13 +33,18 @@ public class RoleBasedAccessDecisionManager implements AccessDecisionManager {
     public void decide(Authentication authentication,
                        Object o, Collection<ConfigAttribute> roles)
             throws AccessDeniedException, InsufficientAuthenticationException {
-        logger.info("=====> Authentication: " + authentication.getName());
-        logger.info("=====> roles: ");
-        for (ConfigAttribute role : roles) {
-            logger.info(role.getAttribute());
-        }
+        logger.info("=====> Current user: " + authentication.getName());
+        logger.info("=====> Resource required roles: " +
+                String.join(", ", roles.stream()
+                        .map(role -> role.getAttribute())
+                        .collect(Collectors.toList())));
+
         // 获取当前用户所具有的角色
         Collection<? extends GrantedAuthority> userRoles = authentication.getAuthorities();
+        logger.info("=====> User has roles: " +
+                String.join(", ", userRoles.stream()
+                        .map(role -> role.getAuthority())
+                        .collect(Collectors.toList())));
 
         // 循环资源所需要的角色
         Iterator<ConfigAttribute> iterator = roles.iterator();
