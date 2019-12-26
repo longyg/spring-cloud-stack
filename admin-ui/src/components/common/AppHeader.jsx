@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Button, Dropdown, Menu, Icon} from 'semantic-ui-react'
 
-export default class AppBar extends Component {
+export default class AppHeader extends Component {
   state = { 
     activeItem: 'home',
     color: "blue"
@@ -19,7 +19,7 @@ export default class AppBar extends Component {
     return (
       <Menu color={color} inverted size='large'>
         <Menu.Item onClick={this.clickSidebarToggle}>
-          <Icon name='list' />
+          <Icon name='content' />
         </Menu.Item>
         <Menu.Item
           name='home'

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import AppBar from './components/common/AppBar'
-import SidebarMenu from './components/common/SidebarMenu'
+import AppHeader from './components/common/AppHeader'
+import AppContent from './components/common/AppContent'
+import AppFooter from './components/common/AppFooter'
 
 export default class App extends Component {
   state = {
@@ -18,8 +19,9 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <AppBar handleSidebar={this.handleSidebar}></AppBar>
-        <SidebarMenu visible={this.state.sidebarVisible}></SidebarMenu>
+        <AppHeader handleSidebar={this.handleSidebar} />
+        <AppContent visible={this.state.sidebarVisible} />
+        <AppFooter />
       </div>
     );
   }
