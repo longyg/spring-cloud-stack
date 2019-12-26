@@ -9,7 +9,7 @@ export default class App extends Component {
     sidebarVisible: true
   }
 
-  handleSidebar = (e, name) => {
+  handleSidebar = () => {
     this.setState((prevState) => ({
       sidebarVisible: !prevState.sidebarVisible
     }))

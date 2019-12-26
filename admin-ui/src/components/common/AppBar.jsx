@@ -9,8 +9,8 @@ export default class AppBar extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
-  handleSidebar = (e, { name }) => {
-    this.props.handleSidebar(e, name);
+  clickSidebarToggle = () => {
+    this.props.handleSidebar();
   }
 
   render() {
@@ -18,7 +18,7 @@ export default class AppBar extends Component {
 
     return (
       <Menu color={color} inverted size='large'>
-        <Menu.Item onClick={this.handleSidebar}>
+        <Menu.Item onClick={this.clickSidebarToggle}>
           <Icon name='list' />
         </Menu.Item>
         <Menu.Item
