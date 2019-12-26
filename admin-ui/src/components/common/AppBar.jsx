@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Dropdown, Menu } from 'semantic-ui-react'
+import { Button, Dropdown, Menu, Icon} from 'semantic-ui-react'
 
 export default class AppBar extends Component {
   state = { 
@@ -9,23 +9,26 @@ export default class AppBar extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
+  handleSidebar = (e, { name }) => {
+    this.props.handleSidebar(e, name);
+  }
+
   render() {
     const { activeItem, color } = this.state
 
     return (
       <Menu color={color} inverted size='large'>
+        <Menu.Item onClick={this.handleSidebar}>
+          <Icon name='list' />
+        </Menu.Item>
         <Menu.Item
           name='home'
           active={activeItem === 'home'}
-          onClick={this.handleItemClick}
-        />
-        <Menu.Item
-          name='messages'
-          active={activeItem === 'messages'}
-          onClick={this.handleItemClick}
-        />
+          onClick={this.handleItemClick}>
+          <Icon name='home'/>Home
+        </Menu.Item>
 
-        <Menu.Menu color={color} inverted position='right'>
+        <Menu.Menu color={color} position='right'>
           <Dropdown item text='Language'>
             <Dropdown.Menu>
               <Dropdown.Item>English</Dropdown.Item>
