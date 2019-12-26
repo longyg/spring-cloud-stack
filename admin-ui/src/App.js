@@ -1,28 +1,16 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Container, Header, List } from 'semantic-ui-react'
+import AppBar from './components/common/AppBar'
+import SidebarMenu from './components/common/SidebarMenu'
 
 const App = ({children}) => {
   return (
-    <Container style={{ margin: 20}}>
-      <Header as="h3">Button Example</Header>
-      <List bulleted>
-        <List.Item 
-          as="a"
-          content="baidu"
-          href="www.baidu.com"
-          target="_blank"
-        />
-        <List.Item 
-          as="a"
-          content="google"
-          href="www.google.com"
-          target="_blank"
-        />
-      </List>
+    <div>
+      <AppBar></AppBar>
+      <SidebarMenu></SidebarMenu>
       {children}
-    </Container>
+    </div>
   );
 }
 

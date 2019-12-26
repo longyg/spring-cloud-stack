@@ -1,0 +1,10 @@
+.ui.menu {
+    margin: 0 0;
+    border-radius: 0;
+}
+
+.ui.segment {
+    margin: 0 0;
+    border: 0 solid transparent;
+    border-radius: 0;
+}
