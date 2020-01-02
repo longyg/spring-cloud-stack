@@ -3,6 +3,9 @@ server:
 spring:
   profiles:
     active: native  # 使用本地存储文件的方式
+  output:
+    ansi:
+      enabled: ALWAYS
   cloud:
     config:
       server:

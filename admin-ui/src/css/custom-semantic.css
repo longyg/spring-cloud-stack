@@ -8,3 +8,17 @@
     border: 0 solid transparent;
     border-radius: 0;
 }
+
+.custom-pusher {
+    width: calc(100% - 260px);
+    transition: width 1s linear 2s;
+    /* Safari */
+    -webkit-transition:width 1s linear 2s;
+}
+
+.custom-pusher-full {
+    width: 100%;
+    transition: width 1s linear 2s;
+    /* Safari */
+    -webkit-transition:width 1s linear 2s;
+}

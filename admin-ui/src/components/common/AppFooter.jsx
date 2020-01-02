@@ -8,7 +8,7 @@ export default class AppFooter extends Component {
       <Segment
         size='tiny'
         textAlign='right'>
-        Copyright 2019 - Spring Cloud Stack 
+        Copyright © 2019 - Spring Cloud Stack - made by yglong
       </Segment>
     )
   }

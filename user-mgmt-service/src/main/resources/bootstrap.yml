@@ -6,3 +6,6 @@ spring:
   cloud:
     config:
       uri: http://localhost:8889
+  output:
+    ansi:
+      enabled: ALWAYS
