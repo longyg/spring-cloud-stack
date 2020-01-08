@@ -3,9 +3,9 @@ import './App.css';
 import { IntlProvider } from 'react-intl';
 import zh_CN from './utils/locale/zh_CN';
 import en_US from './utils/locale/en_US';
-import AppHeader from './components/common/AppHeader'
-import AppContent from './components/common/AppContent'
-import AppFooter from './components/common/AppFooter'
+import AppHeader from './components/common/app/AppHeader'
+import AppContent from './components/common/app/AppContent'
+import AppFooter from './components/common/app/AppFooter'
 
 export default class App extends Component {
   state = {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import UserManagement from '../user/UserManagement'
-import Homepage from '../home/Homepage'
+import UserManagement from '../../user/UserManagement'
+import Homepage from '../../home/Homepage'
 
 export default class AppRouter extends Component {
 

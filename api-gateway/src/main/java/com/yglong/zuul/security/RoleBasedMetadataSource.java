@@ -3,6 +3,8 @@ package com.yglong.zuul.security;
 import com.yglong.zuul.client.UserServiceClient;
 import com.yglong.zuul.config.AuthConfig;
 import com.yglong.zuul.model.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.ConfigAttribute;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Configuration
 public class RoleBasedMetadataSource implements FilterInvocationSecurityMetadataSource {
+    private static final Logger logger = LoggerFactory.getLogger(RoleBasedMetadataSource.class.getName());
 
     @Autowired
     private UserServiceClient userServiceClient;
@@ -35,6 +38,7 @@ public class RoleBasedMetadataSource implements FilterInvocationSecurityMetadata
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
         // 得到请求url
         String requestUrl = ((FilterInvocation) o).getRequestUrl();
+        logger.info("Requesting url: " + requestUrl);
 
         if (isAnonymousAllowedUrl(requestUrl)) {
             return SecurityConfig.createList("ROLE_ANONYMOUS");

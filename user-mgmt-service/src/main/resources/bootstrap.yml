@@ -9,3 +9,6 @@ spring:
   output:
     ansi:
       enabled: ALWAYS
+
+logging:
+  file: C:\ylong\workspace\IntelliJProjects\spring-cloud-stack\user-mgmt-service\user-mgmt-service.log

@@ -7,6 +7,7 @@ const zh_CN = {
     "Edit": "修改",
 
     // 用户管理
+    "UserManagement": "用户管理",
     "Name": "名称",
     "Address": "地址",
     "Username": "登录用户名",

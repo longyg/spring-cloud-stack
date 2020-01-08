@@ -7,6 +7,7 @@ const en_US = {
     "Edit": "Edit",
 
     // 用户管理
+    "UserManagement": "User Management",
     "Name": "Name",
     "Address": "Address",
     "Username": "User Name",

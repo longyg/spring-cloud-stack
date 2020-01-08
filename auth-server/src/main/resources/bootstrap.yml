@@ -6,3 +6,9 @@ spring:
   cloud:
     config:
       uri: http://localhost:8889
+  output:
+    ansi:
+      enabled: ALWAYS
+
+logging:
+  file: C:\ylong\workspace\IntelliJProjects\spring-cloud-stack\auth-server\auth-server.log

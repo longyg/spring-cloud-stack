@@ -15,7 +15,6 @@ public class AuthConfig {
 
     public List<String> getAuthIgnoredUris() {
         return Arrays.stream(authIgnoredUris.split(","))
-                .map(uri -> uri.trim())
-                .collect(Collectors.toList());
+                .map(String::trim).collect(Collectors.toList());
     }
 }

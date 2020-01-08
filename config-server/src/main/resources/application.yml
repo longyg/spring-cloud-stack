@@ -1,6 +1,8 @@
 server:
   port: 8889
 spring:
+  application:
+    name: config-server
   profiles:
     active: native  # 使用本地存储文件的方式
   output:
@@ -11,8 +13,28 @@ spring:
       server:
         git:  # 使用 Git 存储配置文件，需指定git url和路径
           uri: https://github.com/longyg/spring-cloud-stack-config-repo
-          searchPaths: api-gateway, auth-server, user-mgmt-service
+          searchPaths: api-gateway, auth-server, user-mgmt-service, admin-server
         native: # 在本地存储配置文件，需指定本地路径
           searchLocations: file:///C:/ylong/workspace/spring-cloud-stack-config-repo/api-gateway,
                            file:///C:/ylong/workspace/spring-cloud-stack-config-repo/auth-server,
-                           file:///C:/ylong/workspace/spring-cloud-stack-config-repo/user-mgmt-service
+                           file:///C:/ylong/workspace/spring-cloud-stack-config-repo/user-mgmt-service,
+                           file:///C:/ylong/workspace/spring-cloud-stack-config-repo/admin-server
+
+eureka:
+  client:
+    registerWithEureka: true # 注册到Eureka，可以让Spring Boot Admin对其监控
+    fetchRegistry: false
+    serviceUri:
+      defaultZone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+logging:
+  file: C:\ylong\workspace\IntelliJProjects\spring-cloud-stack\config-server\config-server.log

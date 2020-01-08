@@ -70,6 +70,17 @@
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>2.2.2</version>
             </dependency>
+
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-server</artifactId>
+                <version>2.1.6</version>
+            </dependency>
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-client</artifactId>
+                <version>2.1.6</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -108,5 +119,6 @@
         <module>api-gateway</module>
         <module>auth-server</module>
         <module>user-mgmt-service</module>
+        <module>admin-server</module>
     </modules>
 </project>

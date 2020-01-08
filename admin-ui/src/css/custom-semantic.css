@@ -22,3 +22,16 @@
     /* Safari */
     -webkit-transition:width 1s linear 2s;
 }
+
+.custom-form-input-full {
+    width: 100%;
+}
+.custom-form-input-half {
+    width: 50%;
+}
+.custom-form-input-one-third {
+    width: 33.3%;
+}
+.custom-form-input-quarter {
+    width: 25%;
+}

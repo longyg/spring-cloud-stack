@@ -1,5 +1,6 @@
 package com.yglong.auth.security;
 
+import com.yglong.auth.config.ServiceConfig;
 import com.yglong.auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,17 +20,21 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
+    private ServiceConfig serviceConfig;
+
+    @Autowired
     private UserService userService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
+                .antMatchers(serviceConfig.getAuthIgnoredUris().toArray(new String[] {})).permitAll()
                 .anyRequest().authenticated()
             .and()
                 .formLogin().permitAll()
             .and()
-                .csrf().disable();;
+                .csrf().disable();
     }
 
     @Override

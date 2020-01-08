@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { Segment, Header, Modal, Button, Form } from 'semantic-ui-react';
+import { Segment, Header, Message, Icon } from 'semantic-ui-react';
 import Http from '../../utils/Request'
-import DataTable from '../common/DataTable';
+import DataTable from '../common/table/DataTable';
 import { injectIntl } from 'react-intl'
+import FormDialog from '../common/form/FormDialog';
+import { differenceBy } from 'lodash';
 
 const users = [
   {
@@ -52,9 +54,8 @@ class UserManagement extends Component {
     }, 2000)
   }
 
-  add = () => {
+  openAddUserModal = () => {
     this.setState({
-      ...this.state,
       isModalOpen: true
     })
   }
@@ -64,7 +65,42 @@ class UserManagement extends Component {
   }
 
   delete = (data) => {
-    console.log(data)
+    let toDel = []
+    data.forEach(item => {
+      if (item.checked) {
+        toDel.push(item.data)
+      }
+    })
+    if (toDel.length < 1) {
+      this.showTip('Please select at least one data to delete!', 'orange', 'warning sign', false, true)
+      return
+    }
+    const { users } = this.state
+
+    this.showTip('Deleting...', 'blue', 'spinner', true)
+
+    let newUsers = differenceBy(users, toDel, 'id')
+    // let newUsers = []
+    // users.forEach(user => {
+    //   let isDel = false
+    //   toDel.forEach(item => {
+    //     if (item.id === user.id) {
+    //       isDel = true
+    //     }
+    //   })
+    //   if (!isDel) {
+    //     newUsers.push(user)
+    //   }
+    // })
+
+    setTimeout(() => {
+      this.setState({
+        ...this.state,
+        users: newUsers
+      }, () => {
+        this.showTip('Deleted successfully', 'green', 'check circle', false, true)
+      })
+    }, 2000)
   }
 
   deleteRow = (e, rowData) => {
@@ -79,12 +115,7 @@ class UserManagement extends Component {
 
   }
 
-  closeModal = () => {
-    this.setState({ 
-      ...this.state,
-      isModalOpen: false 
-    })
-  }
+
 
   tableConfig = {
     // 是否显示checkbox列
@@ -92,9 +123,9 @@ class UserManagement extends Component {
 
     // 数据列定义
     columnDefs: [
-      {name: 'Name', field: 'name'},
-      {name: 'Address', field: 'address'},
-      {name: 'Username', field: 'username'}
+      { name: 'Name', field: 'name' },
+      { name: 'Address', field: 'address' },
+      { name: 'Username', field: 'username' }
     ],
 
     // 操作列定义
@@ -119,7 +150,7 @@ class UserManagement extends Component {
         icon: 'add',
         iconColor: 'green',
         text: 'Add',
-        onClick: this.add
+        onClick: this.openAddUserModal
       },
       {
         icon: 'delete',
@@ -130,97 +161,130 @@ class UserManagement extends Component {
     ]
   }
 
-  addUser = () => {
+  showTip = (content, color, icon, loading, autoclose) => {
+    this.setState({
+      isTipVisiable: true,
+      tipMessage: content,
+      tipColor: color,
+      tipIcon: icon,
+      isTipLoading: loading
+    }, () => {
+      if (autoclose) {
+        setTimeout(this.closeTip, 3000)
+      }
+    })
+  }
+
+  closeTip = () => {
+    this.setState({
+      isTipVisiable: false
+    })
+  }
+
+  tipMessage = () => {
+    return (
+      <Message color={this.state.tipColor} hidden={!this.state.isTipVisiable} >
+        <Icon name={this.state.tipIcon} loading={this.state.isTipLoading} />
+        {this.state.tipMessage}
+      </Message>
+    )
+  }
+
+  addUser = (e, data) => {
+    const { username, password, name, address } = data
+
     const user = {
-      id: this.state.users.length + 1,
-      name: this.nameElement.value,
-      address: this.addressElement.value,
-      username: this.usernameElement.value,
-      password: this.passwordElement.value
+      // for test
+      id: this.state.users.length + 1 + '',
+      name: name ? name.value : '',
+      address: address ? address.value : '',
+      username: username ? username.value : '',
+      password: password ? password.value : ''
     }
+
     let { users } = this.state
-    users.push(user)
+
+    this.setState({
+      isModalOpen: false
+    }, () => {
+      this.showTip('Saving...', 'blue', 'spinner', true)
+    })
+
+    setTimeout(() => {
+      users.push(user)
+      this.setState({
+        ...this.state,
+        users: users
+      }, () => {
+        this.showTip('Saved successfully', 'green', 'check circle', false, true)
+      })
+    }, 2000)
+  }
+
+  closeModal = () => {
     this.setState({
       ...this.state,
-      users: users,
       isModalOpen: false
     })
   }
 
-  usernameRef = (element) =>  {
-    this.usernameElement = element
-  }
-  passwordRef = (element) =>  {
-    this.passwordElement = element
-  }
-  nameRef = (element) =>  {
-    this.nameElement = element
-  }
-  addressRef = (element) =>  {
-    this.addressElement = element
-  }
-
-  renderAddUserModal = () => {
-    return (
-      <Modal
-        size='mini'
-        open={this.state.isModalOpen}
-        closeOnEscape={true}
-        closeOnDimmerClick={false}
-        onClose={this.closeModal}
-      >
-        <Modal.Header>{this.props.intl.formatMessage({id: "AddUser"})}</Modal.Header>
-        <Modal.Content>
-          <Form>
-            <Form.Field required>
-              <label>{this.props.intl.formatMessage({id: "Username"})}</label>
-              <input ref={this.usernameRef} placeholder='User Name' />
-            </Form.Field>
-            <Form.Field required >
-              <label>{this.props.intl.formatMessage({id: "Password"})}</label>
-              <input ref={this.passwordRef} placeholder='Password' type='password'/>
-            </Form.Field>
-            <Form.Field>
-              <label>{this.props.intl.formatMessage({id: "Name"})}</label>
-              <input ref={this.nameRef} placeholder='Name' />
-            </Form.Field>
-            <Form.Field>
-              <label>{this.props.intl.formatMessage({id: "Address"})}</label>
-              <input ref={this.addressRef} placeholder='Address' />
-            </Form.Field>
-          </Form>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button onClick={this.closeModal} negative>
-            {this.props.intl.formatMessage({id: "Cancel"})}
-          </Button>
-          <Button
-            onClick={this.addUser}
-            positive
-            labelPosition='right'
-            icon='checkmark'
-            content={this.props.intl.formatMessage({id: "Save"})}
-          />
-        </Modal.Actions>
-      </Modal>
-    )
+  addFormConfig = {
+    headerText: 'AddUser',
+    formColumns: 2,
+    forms: [
+      {
+        label: 'Username', field: 'username', placeholder: 'User Name',
+        required: true, requiredText: 'User Name is mandatory'
+      },
+      {
+        label: 'Password', field: 'password', placeholder: 'Password',
+        type: 'password',
+        required: true, requiredText: 'Password is mandatory'
+      },
+      {
+        label: 'Name', field: 'name', placeholder: 'Name'
+      },
+      {
+        label: 'Address', field: 'address', placeholder: 'Address'
+      }
+    ],
+    actions: [
+      {
+        text: 'Cancel',
+        color: 'red',
+        onClick: this.closeModal
+      },
+      {
+        text: 'Save',
+        color: 'green',
+        onClick: this.addUser,
+        checkRequired: true,
+        clearForm: true,
+        icon: {
+          name: 'checkmark',
+          position: 'right'
+        }
+      }
+    ]
   }
 
   render() {
-    console.log('render user', this.state)
     const { users, loading } = this.state
     return (
       <Segment.Group raised>
         <Segment>
-          <Header as='h3'>User Management</Header>
+          <Header as='h3'>{this.props.intl.formatMessage({ id: 'UserManagement' })}</Header>
         </Segment>
         <Segment loading={loading}>
+          {/* 提示消息 */}
+          {this.tipMessage()}
+
+          {/* 数据表格 */}
           <DataTable config={this.tableConfig} data={users} />
         </Segment>
 
         {/* 添加用户弹出框 */}
-        {this.renderAddUserModal()}
-        <Loading visible={this.state.isLoadingVisible}></Loading>
+        <FormDialog size='tiny' isOpen={this.state.isModalOpen} config={this.addFormConfig}></FormDialog>
       </Segment.Group>
     )
   }

@@ -2,13 +2,27 @@ server:
   port: 8761
 
 spring:
+  application:
+    name: eureka-server
   output:
     ansi:
       enabled: ALWAYS
 
 eureka:
   client:
-    registerWithEureka: false  # 不注册自己
+    registerWithEureka: true  # 注册自己，可以让Spring Boot Admin对其进行监控
     fetchRegistry: false  # 不从自己拉取注册信息
   server:
     waitTimeInMsWhenSyncEmpty: 0  # set as 0 for testing only
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+logging:
+  file: C:\ylong\workspace\IntelliJProjects\spring-cloud-stack\eureka-server\eureka-server.log

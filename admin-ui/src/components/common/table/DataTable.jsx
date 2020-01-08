@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Table, Button, Icon, Checkbox } from 'semantic-ui-react';
 import { injectIntl } from 'react-intl'
+import { intersectionBy, intersectionWith, isEqualWith, isEqual, differenceBy, last } from 'lodash';
 
 class DataTable extends Component {
   state = {
-    selectStatus: 'no', // no, all, partial,
     dataItems: []
   }
 
@@ -17,55 +17,83 @@ class DataTable extends Component {
     size: 'small'
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { data } = nextProps;
-    let currentData = []
-    prevState.dataItems.forEach(item => {
-      currentData.push(item.data)
-    })
-    // 当传入的data发生变化的时候，更新state
-    if (data !== currentData) {
-      let dataItems = []
-      let rowIndex = prevState.dataItems.length
-      data.forEach(i => {
-        let find = false
-        prevState.dataItems.forEach(item => {
-          if (item.data.id === i.id) {
-            dataItems.push(item)
-            find = true
-          }
-        })
-        if (!find) {
-          dataItems.push({
-            rowIndex: rowIndex,
-            checked: false,
-            data: i
-          })
-          rowIndex++
-        }
-      })
-      return {
-          ...prevState,
-          dataItems: dataItems
-      };
+  static customizer = (obj1, obj2) => {
+    if (obj1.data.id === obj2.id) {
+      return true
     }
-    // 否则，对于state不进行任何操作
-    return null;
+    return false
   }
 
-  dataItems = () => {
-    const { data } = this.props
-    let dataItems = []
-    let rowIndex = 0
-    data.forEach((item) => {
-      dataItems.push({
-        rowIndex: rowIndex,
-        checked: false,
-        data: item
-      })
-      rowIndex++
+  static isEqualCustom (obj1, obj2) {
+    return isEqualWith(obj1, obj2, DataTable.customizer)
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { data } = nextProps
+    const { dataItems } = prevState
+    let prevData = []
+    dataItems.forEach(item => {
+      prevData.push(item.data)
     })
-    return dataItems
+
+    if (data.length < dataItems.length) {
+      console.debug('table data deleted')
+      let newDataItems = intersectionWith(dataItems, data, DataTable.isEqualCustom)
+      console.debug(newDataItems)
+      return {
+        dataItems: newDataItems
+      }
+    } else if (data.length > dataItems.length) {
+      console.debug('table data added', data, dataItems)
+      // TODO, use identifier
+      let addedData = differenceBy(data, prevData, 'id')
+      let lastItem = last(dataItems)
+      let rowIndex = lastItem ? lastItem.rowIndex + 1 : 0
+      let newDataItems = [ ...dataItems ]
+      addedData.forEach(d => {
+        newDataItems.push({
+          rowIndex: rowIndex,
+          checked: false,
+          data: d
+        })
+        rowIndex++
+      })
+      console.debug(newDataItems)
+      return {
+        dataItems: newDataItems
+      }
+    } else {
+      if (!isEqual(data, prevData)) {
+        console.log('table data changed')
+        // TODO: edit
+      }
+    }
+
+    // if (data.length !== currentData.length || data !== currentData) {
+    //   console.debug('table data changed:', data, currentData)
+    //   let dataItems = []
+    //   let rowIndex = prevState.dataItems.length
+    //   data.forEach(i => {
+    //     let find = false
+    //     prevState.dataItems.forEach(item => {
+    //       if (item.data.id === i.id) {
+    //         dataItems.push(item)
+    //         find = true
+    //       }
+    //     })
+    //     if (!find) {
+    //       dataItems.push({
+    //         rowIndex: rowIndex,
+    //         checked: false,
+    //         data: i
+    //       })
+    //       rowIndex++
+    //     }
+    //   })
+    //   return {
+    //       dataItems: dataItems
+    //   };
+    return null;
   }
 
   selectAll = (e, data) => {
@@ -74,43 +102,50 @@ class DataTable extends Component {
       item.checked = data.checked
     })
     this.setState({
-      selectStatus: data.checked ? 'all' : 'no',
       dataItems: dataItems
     })
   }
 
   select = (e, data, item) => {
     const { dataItems } = this.state
-    let selectedCount = 0
     dataItems.forEach(i => {
       if (i.rowIndex === item.rowIndex) {
         i.checked = data.checked
       }
-      if (i.checked) {
-        selectedCount++
-      }
     })
-
-    let selectStatus
-    if (selectedCount === 0) {
-      selectStatus = 'no'
-    } else if (selectedCount === dataItems.length) {
-      selectStatus = 'all'
-    } else {
-      selectStatus = 'partial'
-    }
     this.setState({
-      selectStatus: selectStatus,
       dataItems: dataItems
     })
   }
 
+  getSelectedCount = (dataItems) => {
+    let selectedCount = 0
+    dataItems.forEach(i => {
+      if (i.checked) {
+        selectedCount++
+      }
+    })
+    return selectedCount
+  }
+
   isSelectAllChecked = () => {
-    return this.state.selectStatus === 'all' ? true : false
+    const { dataItems } = this.state
+    const selectedCount = this.getSelectedCount(dataItems)
+    if (selectedCount === 0) {
+      return false
+    } else if (selectedCount === dataItems.length) {
+      return true
+    }
   }
 
   isSelectAllIndeterminate = () => {
-    return this.state.selectStatus === 'partial' ? true : false
+    const { dataItems } = this.state
+    const selectedCount = this.getSelectedCount(dataItems)
+    if (selectedCount > 0 && selectedCount !== dataItems.length) {
+      return true
+    } else {
+      return false
+    }
   }
 
   dataTable = () => {
@@ -120,10 +155,10 @@ class DataTable extends Component {
       let btnIndex = 0
       config.headerActions.forEach((action) => {
         content.push(
-          <Button key={`header-action-btn-${btnIndex}`} basic size='small' 
-            onClick={() => {action.onClick(this.state.dataItems)}}>
+          <Button key={`header-action-btn-${btnIndex}`} basic size='small'
+            onClick={() => { action.onClick(this.state.dataItems) }}>
             <Icon color={action.iconColor} name={action.icon} />
-            {this.props.intl.formatMessage({id: action.text})}
+            {this.props.intl.formatMessage({ id: action.text })}
           </Button>
         )
         btnIndex++
@@ -160,7 +195,7 @@ class DataTable extends Component {
     config.columnDefs.forEach((cell) => {
       headerCells.push(
         <Table.HeaderCell key={`header-${cellIndex}`}>
-          {this.props.intl.formatMessage({id: cell['name']})}
+          {this.props.intl.formatMessage({ id: cell['name'] })}
         </Table.HeaderCell>
       )
       cellIndex++
@@ -170,7 +205,7 @@ class DataTable extends Component {
     if (config.rowActions) {
       headerCells.push(
         <Table.HeaderCell key={`header-${cellIndex}`}>
-          {this.props.intl.formatMessage({id: 'table-operation-title'})}
+          {this.props.intl.formatMessage({ id: 'table-operation-title' })}
         </Table.HeaderCell>
       )
     }
@@ -208,8 +243,8 @@ class DataTable extends Component {
     if (config.checkboxColumn) {
       rowCells.push(
         <Table.Cell key={`cell-${item.rowIndex}-${cellIndex}`} textAlign='center' verticalAlign='middle'>
-          <Checkbox 
-            checked={item.checked} 
+          <Checkbox
+            checked={item.checked}
             onChange={(e, data) => this.select(e, data, item)} />
         </Table.Cell>
       )
@@ -245,7 +280,7 @@ class DataTable extends Component {
       actionBtns.push(
         <Button key={`btn-${item.rowIndex}-${btnIndex}`} basic size='tiny' onClick={(e) => action.onClick(e, item)}>
           <Icon color={action.iconColor} name={action.icon} />
-          {this.props.intl.formatMessage({id: action.text})}
+          {this.props.intl.formatMessage({ id: action.text })}
         </Button>
       )
       btnIndex++
@@ -254,7 +289,6 @@ class DataTable extends Component {
   }
 
   render() {
-    console.log('render table', this.props)
     return this.dataTable()
   }
 }
