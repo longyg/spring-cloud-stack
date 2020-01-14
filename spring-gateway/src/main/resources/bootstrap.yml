@@ -1,6 +1,6 @@
 spring:
   application:
-    name: user-mgmt-service
+    name: spring-gateway
   profiles:
     active: default
   cloud:
@@ -13,4 +13,4 @@ spring:
       enabled: ALWAYS
 
 logging:
-  file: C:\ylong\workspace\IntelliJProjects\spring-cloud-stack\user-mgmt-service\user-mgmt-service.log
+  file: C:\ylong\workspace\IntelliJProjects\spring-cloud-stack\spring-gateway\spring-gateway.log

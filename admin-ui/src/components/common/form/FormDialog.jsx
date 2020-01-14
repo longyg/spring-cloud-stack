@@ -12,11 +12,22 @@ class FormDialog extends Component {
     static getDerivedStateFromProps(nextProps, prevState) {
         const { isOpen, size, config } = prevState
         if (nextProps.isOpen !== isOpen || nextProps.size !== size || nextProps.config !== config) {
+            let formState = {}
+            if (nextProps.config) {
+                nextProps.config.forms.forEach(formConfig => {
+                    const { field } = formConfig
+                    formState[field] = {
+                        errorState: false,
+                        value: formConfig.defaultValue ? formConfig.defaultValue : null
+                    }
+                })
+            }
             return {
                 ...prevState,
                 isOpen: nextProps.isOpen,
                 size: nextProps.size,
-                config: nextProps.config
+                config: nextProps.config,
+                formState: formState
             }
         }
         return null
@@ -187,7 +198,7 @@ class FormDialog extends Component {
             }
         }
         // call onclick action
-        onClick(e, formState)
+        onClick(e, formState, config)
 
         if (clearForm) {
             this.setState({
@@ -199,6 +210,7 @@ class FormDialog extends Component {
     render() {
         const { isOpen, size, config } = this.state
         return (
+            config ?
             <Modal
                 size={size}
                 open={isOpen}
@@ -215,6 +227,7 @@ class FormDialog extends Component {
                     {this.actions(config)}
                 </Modal.Actions>
             </Modal>
+            : null
         )
     }
 }

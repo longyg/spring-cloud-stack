@@ -6,12 +6,13 @@ import en_US from './utils/locale/en_US';
 import AppHeader from './components/common/app/AppHeader'
 import AppContent from './components/common/app/AppContent'
 import AppFooter from './components/common/app/AppFooter'
+import { TipContextProvider } from './components/common/context/Context'
 
 export default class App extends Component {
   state = {
     sidebarVisible: true,
     contentClassName: 'custom-pusher',
-    lang: 'zh' // zh, en
+    lang: 'en' // zh, en
   }
 
   messages = {
@@ -36,11 +37,13 @@ export default class App extends Component {
   render() {
     return (
       <IntlProvider locale={this.state.lang} messages={this.messages[this.state.lang]}>
-        <div>
-          <AppHeader handleSidebar={this.handleSidebar} changeLanguage={this.changeLanguage} />
-          <AppContent visible={this.state.sidebarVisible} contentClassName={this.state.contentClassName} />
-          <AppFooter />
-        </div>
+        <TipContextProvider>
+          <div>
+            <AppHeader handleSidebar={this.handleSidebar} changeLanguage={this.changeLanguage} />
+            <AppContent visible={this.state.sidebarVisible} contentClassName={this.state.contentClassName} />
+            <AppFooter />
+          </div>
+        </TipContextProvider>
       </IntlProvider>
     );
   }

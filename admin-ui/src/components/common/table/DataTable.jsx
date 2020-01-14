@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Table, Button, Icon, Checkbox } from 'semantic-ui-react';
 import { injectIntl } from 'react-intl'
-import { intersectionBy, intersectionWith, isEqualWith, isEqual, differenceBy, last } from 'lodash';
+import { intersectionWith, isEqualWith, isEqual, differenceBy, last, find } from 'lodash';
 
 class DataTable extends Component {
   state = {
@@ -64,35 +64,22 @@ class DataTable extends Component {
       }
     } else {
       if (!isEqual(data, prevData)) {
-        console.log('table data changed')
-        // TODO: edit
+        console.debug('table data edited', data, dataItems)
+        let newDataItems = []
+        dataItems.forEach(d => {
+          let newData = find(data, (o) => o.id === d.data.id)
+          newDataItems.push({
+            rowIndex: d.rowIndex,
+            checked: d.checked,
+            data: newData
+          })
+        })
+        console.debug(newDataItems)
+        return {
+          dataItems: newDataItems
+        }
       }
     }
-
-    // if (data.length !== currentData.length || data !== currentData) {
-    //   console.debug('table data changed:', data, currentData)
-    //   let dataItems = []
-    //   let rowIndex = prevState.dataItems.length
-    //   data.forEach(i => {
-    //     let find = false
-    //     prevState.dataItems.forEach(item => {
-    //       if (item.data.id === i.id) {
-    //         dataItems.push(item)
-    //         find = true
-    //       }
-    //     })
-    //     if (!find) {
-    //       dataItems.push({
-    //         rowIndex: rowIndex,
-    //         checked: false,
-    //         data: i
-    //       })
-    //       rowIndex++
-    //     }
-    //   })
-    //   return {
-    //       dataItems: dataItems
-    //   };
     return null;
   }
 

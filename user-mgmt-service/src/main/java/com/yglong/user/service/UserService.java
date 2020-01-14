@@ -26,8 +26,20 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
     public void addUsers(List<User> users) {
         userRepository.saveAll(users);
+    }
+
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
+
+    public void deleteUsers(List<User> users) {
+        userRepository.deleteAll(users);
     }
 
     public void addUserRoles(List<UserRoles> userRoles) {

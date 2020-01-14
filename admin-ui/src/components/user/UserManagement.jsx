@@ -1,57 +1,35 @@
 import React, { Component } from 'react';
-import { Segment, Header, Message, Icon } from 'semantic-ui-react';
+import { Segment, Header } from 'semantic-ui-react';
 import Http from '../../utils/Request'
 import DataTable from '../common/table/DataTable';
 import { injectIntl } from 'react-intl'
 import FormDialog from '../common/form/FormDialog';
-import { differenceBy } from 'lodash';
-
-const users = [
-  {
-    id: "1",
-    name: 'Yglong',
-    address: 'Sichuan Chengdu',
-    username: 'yglong',
-    password: 'password'
-  },
-  {
-    id: '2',
-    name: 'Test User',
-    address: 'Chongqing',
-    username: 'testUser',
-    password: 'password'
-  },
-  {
-    id: '3',
-    name: 'Test User 2',
-    address: 'Chongqing',
-    username: 'testUser2',
-    password: 'password'
-  }
-]
+import { withTipContext } from '../common/context/Context'
+import TipMessage from '../common/TipMessage'
 
 class UserManagement extends Component {
   state = {
     users: [],
     loading: true,
-    isModalOpen: false
+    isModalOpen: false,
+    isEditModalOpen: false
   }
 
   componentDidMount = () => {
-    // Http.get('/user')
-    //   .then((res) => {
-    //     this.setState({
-    //       users: res.data,
-    //       loading: false
-    //     })
-    //   }
-    // )
-    setTimeout(() => {
+    this.fetchData()
+  }
+
+  tipCtx = () => {
+    return this.props.tipContext
+  }
+
+  fetchData = () => {
+    Http.get('/userservice/user').then(res => {
       this.setState({
-        users: users,
+        users: res.data,
         loading: false
       })
-    }, 2000)
+    })
   }
 
   openAddUserModal = () => {
@@ -60,8 +38,24 @@ class UserManagement extends Component {
     })
   }
 
-  edit = (e, rowData) => {
-    console.log(rowData)
+  openEditUserModal = (e, rowData) => {
+    let editFormConfig = this.setFormConfig(this.editFormConfig, rowData)
+    this.setState({
+      editFormConfig: editFormConfig,
+      isEditModalOpen: true
+    })
+  }
+
+  setFormConfig = (config, rowData) => {
+    let forms = config.forms
+    let newForms = []
+    forms.forEach(form => {
+      form.defaultValue = rowData.data[form.field]
+      newForms.push(form)
+    })
+    config.forms = newForms
+    config.rowData = rowData
+    return config
   }
 
   delete = (data) => {
@@ -72,50 +66,95 @@ class UserManagement extends Component {
       }
     })
     if (toDel.length < 1) {
-      this.showTip('Please select at least one data to delete!', 'orange', 'warning sign', false, true)
+      this.tipCtx().showNoRowSelectedTip()
       return
     }
-    const { users } = this.state
-
-    this.showTip('Deleting...', 'blue', 'spinner', true)
-
-    let newUsers = differenceBy(users, toDel, 'id')
-    // let newUsers = []
-    // users.forEach(user => {
-    //   let isDel = false
-    //   toDel.forEach(item => {
-    //     if (item.id === user.id) {
-    //       isDel = true
-    //     }
-    //   })
-    //   if (!isDel) {
-    //     newUsers.push(user)
-    //   }
-    // })
-
-    setTimeout(() => {
-      this.setState({
-        ...this.state,
-        users: newUsers
-      }, () => {
-        this.showTip('Deleted successfully', 'green', 'check circle', false, true)
-      })
-    }, 2000)
+    this.deleteUsers(toDel)
   }
 
   deleteRow = (e, rowData) => {
-    console.log(rowData)
+    let toDel = []
+    toDel.push(rowData.data)
+    this.deleteUsers(toDel)
   }
 
-  onRowCheck = () => {
-
+  deleteUsers = (toDel) => {
+    this.tipCtx().showDeletingTip()
+    Http.delete('/userservice/user', {
+      data: toDel
+    }).then(res => {
+      this.tipCtx().showDeletedTip()
+      this.fetchData()
+    }).catch(err => {
+      this.tipCtx().showErrorTip(err)
+    })
   }
 
-  onAllRowCheck = () => {
+  addUser = (e, data) => {
+    const { username, password, name, address } = data
 
+    const user = {
+      name: name ? name.value : '',
+      address: address ? address.value : '',
+      username: username ? username.value : '',
+      password: password ? password.value : ''
+    }
+
+    this.setState({
+      isModalOpen: false
+    }, () => {
+      this.tipCtx().showSavingTip()
+    })
+
+    Http.post('/userservice/user', user).then(res => {
+      this.tipCtx().showSavedTip()
+      this.fetchData()
+    }).catch(err => {
+      this.tipCtx().showErrorTip(err)
+    })
   }
 
+  closeAddModal = () => {
+    this.setState({
+      isModalOpen: false
+    })
+  }
 
+  editUser = (e, data, config) => {
+    const { username, password, name, address } = data
+
+    if (!config.rowData || !config.rowData.data) {
+      return
+    }
+
+    const id = config.rowData.data.id
+    let user = {
+      id: id,
+      name: name ? name.value : '',
+      address: address ? address.value : '',
+      username: username ? username.value : '',
+      password: password ? password.value : ''
+    }
+
+    this.setState({
+      isEditModalOpen: false
+    }, () => {
+      this.tipCtx().showSavingTip()
+    })
+
+    Http.put('/userservice/user', user).then(res => {
+      this.tipCtx().showSavedTip()
+      this.fetchData()
+    }).catch(err => {
+      this.tipCtx().showErrorTip(err)
+    })
+  }
+
+  closeEditModal = () => {
+    this.setState({
+      isEditModalOpen: false
+    })
+  }
 
   tableConfig = {
     // 是否显示checkbox列
@@ -134,7 +173,7 @@ class UserManagement extends Component {
         icon: 'edit',
         iconColor: 'blue',
         text: 'Edit',
-        onClick: this.edit
+        onClick: this.openEditUserModal
       },
       {
         icon: 'delete',
@@ -161,103 +200,63 @@ class UserManagement extends Component {
     ]
   }
 
-  showTip = (content, color, icon, loading, autoclose) => {
-    this.setState({
-      isTipVisiable: true,
-      tipMessage: content,
-      tipColor: color,
-      tipIcon: icon,
-      isTipLoading: loading
-    }, () => {
-      if (autoclose) {
-        setTimeout(this.closeTip, 3000)
-      }
-    })
-  }
-
-  closeTip = () => {
-    this.setState({
-      isTipVisiable: false
-    })
-  }
-
-  tipMessage = () => {
-    return (
-      <Message color={this.state.tipColor} hidden={!this.state.isTipVisiable} >
-        <Icon name={this.state.tipIcon} loading={this.state.isTipLoading} />
-        {this.state.tipMessage}
-      </Message>
-    )
-  }
-
-  addUser = (e, data) => {
-    const { username, password, name, address } = data
-
-    const user = {
-      // for test
-      id: this.state.users.length + 1 + '',
-      name: name ? name.value : '',
-      address: address ? address.value : '',
-      username: username ? username.value : '',
-      password: password ? password.value : ''
+  formDefs = [
+    {
+      label: 'Username', field: 'username', placeholder: 'User Name',
+      required: true, requiredText: 'User Name is mandatory'
+    },
+    {
+      label: 'Password', field: 'password', placeholder: 'Password',
+      type: 'password',
+      required: true, requiredText: 'Password is mandatory'
+    },
+    {
+      label: 'Name', field: 'name', placeholder: 'Name'
+    },
+    {
+      label: 'Address', field: 'address', placeholder: 'Address'
     }
-
-    let { users } = this.state
-
-    this.setState({
-      isModalOpen: false
-    }, () => {
-      this.showTip('Saving...', 'blue', 'spinner', true)
-    })
-
-    setTimeout(() => {
-      users.push(user)
-      this.setState({
-        ...this.state,
-        users: users
-      }, () => {
-        this.showTip('Saved successfully', 'green', 'check circle', false, true)
-      })
-    }, 2000)
-  }
-
-  closeModal = () => {
-    this.setState({
-      ...this.state,
-      isModalOpen: false
-    })
-  }
+  ]
 
   addFormConfig = {
     headerText: 'AddUser',
     formColumns: 2,
-    forms: [
-      {
-        label: 'Username', field: 'username', placeholder: 'User Name',
-        required: true, requiredText: 'User Name is mandatory'
-      },
-      {
-        label: 'Password', field: 'password', placeholder: 'Password',
-        type: 'password',
-        required: true, requiredText: 'Password is mandatory'
-      },
-      {
-        label: 'Name', field: 'name', placeholder: 'Name'
-      },
-      {
-        label: 'Address', field: 'address', placeholder: 'Address'
-      }
-    ],
+    forms: this.formDefs,
     actions: [
       {
         text: 'Cancel',
         color: 'red',
-        onClick: this.closeModal
+        onClick: this.closeAddModal
       },
       {
         text: 'Save',
         color: 'green',
         onClick: this.addUser,
+        checkRequired: true,
+        clearForm: true,
+        icon: {
+          name: 'checkmark',
+          position: 'right'
+        }
+      }
+    ]
+  }
+
+  editFormConfig = {
+    headerText: 'EditUser',
+    formColumns: 2,
+    forms: this.formDefs,
+    actions: [
+      {
+        text: 'Cancel',
+        color: 'red',
+        onClick: this.closeEditModal,
+        clearForm: true
+      },
+      {
+        text: 'Save',
+        color: 'green',
+        onClick: this.editUser,
         checkRequired: true,
         clearForm: true,
         icon: {
@@ -277,17 +276,21 @@ class UserManagement extends Component {
         </Segment>
         <Segment loading={loading}>
           {/* 提示消息 */}
-          {this.tipMessage()}
+          {/* {this.tipMessage()} */}
+          <TipMessage />
 
           {/* 数据表格 */}
           <DataTable config={this.tableConfig} data={users} />
         </Segment>
 
         {/* 添加用户弹出框 */}
-        <FormDialog size='tiny' isOpen={this.state.isModalOpen} config={this.addFormConfig}></FormDialog>
+        <FormDialog size='tiny' isOpen={this.state.isModalOpen} config={this.addFormConfig} />
+
+        {/* 编辑用户弹出框 */}
+        <FormDialog size='tiny' isOpen={this.state.isEditModalOpen} config={this.state.editFormConfig} />
       </Segment.Group>
     )
   }
 }
 
-export default injectIntl(UserManagement)
+export default injectIntl(withTipContext(UserManagement))
