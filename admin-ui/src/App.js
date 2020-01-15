@@ -7,6 +7,7 @@ import AppHeader from './components/common/app/AppHeader'
 import AppContent from './components/common/app/AppContent'
 import AppFooter from './components/common/app/AppFooter'
 import { TipContextProvider } from './components/common/context/Context'
+import { getLoginUser } from './utils/Auth'
 
 export default class App extends Component {
   state = {
@@ -18,6 +19,10 @@ export default class App extends Component {
   messages = {
     'zh': zh_CN,
     'en': en_US
+  }
+
+  componentDidMount() {
+    
   }
 
   changeLanguage = (lang) => {

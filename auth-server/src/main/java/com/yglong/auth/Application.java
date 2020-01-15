@@ -9,11 +9,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.List;
-
 @SpringBootApplication
-//@EnableResourceServer
+@EnableResourceServer
 @EnableAuthorizationServer
 @EnableFeignClients
 public class Application {
