@@ -17,6 +17,12 @@ const en_US = {
     "Cancel": "Cancel",
     "Save": "Save",
 
+    // 登录
+    "LoginSystem": "Login to System",
+    "Login": "Sign in",
+    "login.username": "User Name",
+    "login.password": "Password",
+
 
     "lang": "Language",
     "zh": "Chinese",

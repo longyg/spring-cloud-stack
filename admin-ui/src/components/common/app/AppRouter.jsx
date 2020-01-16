@@ -8,8 +8,8 @@ export default class AppRouter extends Component {
     render() {
         return (
             <Switch>
-                <Route exact path="/" component={Homepage} />
-                <Route exact path="/user" component={UserManagement} />
+                <Route exact path="/a/home" component={Homepage} />
+                <Route exact path="/a/user" component={UserManagement} />
             </Switch>
         )
     }

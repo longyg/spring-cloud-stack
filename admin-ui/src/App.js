@@ -1,35 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
-import { IntlProvider } from 'react-intl';
-import zh_CN from './utils/locale/zh_CN';
-import en_US from './utils/locale/en_US';
 import AppHeader from './components/common/app/AppHeader'
 import AppContent from './components/common/app/AppContent'
 import AppFooter from './components/common/app/AppFooter'
-import { TipContextProvider } from './components/common/context/Context'
-import { getLoginUser } from './utils/Auth'
 
 export default class App extends Component {
   state = {
     sidebarVisible: true,
-    contentClassName: 'custom-pusher',
-    lang: 'en' // zh, en
-  }
-
-  messages = {
-    'zh': zh_CN,
-    'en': en_US
-  }
-
-  componentDidMount() {
-    
-  }
-
-  changeLanguage = (lang) => {
-    this.setState({
-      ...this.state,
-      lang: lang
-    })
+    contentClassName: 'custom-pusher'
   }
 
   handleSidebar = () => {
@@ -41,15 +19,11 @@ export default class App extends Component {
 
   render() {
     return (
-      <IntlProvider locale={this.state.lang} messages={this.messages[this.state.lang]}>
-        <TipContextProvider>
-          <div>
-            <AppHeader handleSidebar={this.handleSidebar} changeLanguage={this.changeLanguage} />
-            <AppContent visible={this.state.sidebarVisible} contentClassName={this.state.contentClassName} />
-            <AppFooter />
-          </div>
-        </TipContextProvider>
-      </IntlProvider>
+      <div>
+        <AppHeader handleSidebar={this.handleSidebar} />
+        <AppContent visible={this.state.sidebarVisible} contentClassName={this.state.contentClassName} />
+        <AppFooter />
+      </div>
     );
   }
 }

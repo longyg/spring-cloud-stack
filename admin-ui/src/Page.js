@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-do
 import App from './App';
 import { authentication } from './utils/Auth'
 import NotFound from './components/common/app/NotFound'
+import Login from './components/common/user/Login'
 
 export default class Page extends Component {
     
@@ -10,12 +11,13 @@ export default class Page extends Component {
         return (
             <Router>
                 <Switch>
-                    <PrivateRoute path='/' component={App} />
+                    <Route exact path='/' render={() => <Redirect to='/a/home' />} />
+                    <PrivateRoute path='/a' component={App} />
 
                     <Route exact path='/login' component={Login} />
                     <Route exact path='/error' component={NotFound} />
 
-                    <Route render={() => <Redirect to="/error" />} />
+                    <Redirect to="/error" />
                 </Switch>
             </Router>
         )

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { TipContext } from './context/Context'
+import { TipContext } from './context'
 import { Message, Icon } from 'semantic-ui-react'
 
 class TipMessage extends Component {

@@ -2,12 +2,20 @@ import React, { Component } from 'react'
 import { Button, Dropdown, Menu, Icon} from 'semantic-ui-react'
 import { withRouter } from 'react-router-dom'
 import { injectIntl } from 'react-intl'
+import { withIntlContext } from '../context'
 
 class AppHeader extends Component {
   state = { 
     activeItem: 'home',
-    color: 'blue',
-    activeLangIndex: 1
+    color: 'blue'
+  }
+
+  intlCtx = () => {
+    return this.props.intlCtx
+  }
+
+  changeLang = (lang) => {
+    this.intlCtx().changeLang(lang)
   }
 
   handleItemClick = (e, { name }) => {
@@ -17,14 +25,6 @@ class AppHeader extends Component {
 
   clickSidebarToggle = () => {
     this.props.handleSidebar();
-  }
-
-  selectLanguage = (lang, index) => {
-    this.setState({
-      ...this.state,
-      activeLangIndex: index
-    })
-    this.props.changeLanguage(lang)
   }
 
   render() {
@@ -44,12 +44,12 @@ class AppHeader extends Component {
         <Menu.Menu color={color} position='right'>
           <Dropdown item text={this.props.intl.formatMessage({id: 'lang'})}>
             <Dropdown.Menu>
-              <Dropdown.Item onClick={() => this.selectLanguage('zh', 1)} 
-                active={this.state.activeLangIndex === 1}>
+              <Dropdown.Item onClick={() => this.changeLang('zh')} 
+                active={this.intlCtx().lang === 'zh'}>
                 {this.props.intl.formatMessage({id: 'zh'})}
               </Dropdown.Item>
-              <Dropdown.Item onClick={() => this.selectLanguage('en', 2)} 
-                active={this.state.activeLangIndex === 2}>
+              <Dropdown.Item onClick={() => this.changeLang('en')} 
+                active={this.intlCtx().lang === 'en'}>
                 {this.props.intl.formatMessage({id: 'en'})}
               </Dropdown.Item>
             </Dropdown.Menu>
@@ -64,4 +64,4 @@ class AppHeader extends Component {
   }
 }
 
-export default withRouter(injectIntl(AppHeader))
+export default withRouter(withIntlContext(injectIntl(AppHeader)))

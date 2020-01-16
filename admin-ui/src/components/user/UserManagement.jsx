@@ -4,7 +4,7 @@ import Http from '../../utils/Request'
 import DataTable from '../common/table/DataTable';
 import { injectIntl } from 'react-intl'
 import FormDialog from '../common/form/FormDialog';
-import { withTipContext } from '../common/context/Context'
+import { withTipContext } from '../common/context'
 import TipMessage from '../common/TipMessage'
 
 class UserManagement extends Component {
@@ -20,7 +20,7 @@ class UserManagement extends Component {
   }
 
   tipCtx = () => {
-    return this.props.tipContext
+    return this.props.tipCtx
   }
 
   fetchData = () => {
