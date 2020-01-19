@@ -12,6 +12,13 @@ spring:
     ansi:
       enabled: ALWAYS
 
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://10.131.98.87:30010/eureka
+
 logging:
   level:
     org.springframework: INFO

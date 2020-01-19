@@ -20,6 +20,7 @@ const en_US = {
     // 登录
     "LoginSystem": "Login to System",
     "Login": "Sign in",
+    "Logout": "Log out",
     "login.username": "User Name",
     "login.password": "Password",
 

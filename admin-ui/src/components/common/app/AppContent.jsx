@@ -2,41 +2,10 @@ import React, { Component } from 'react'
 import { Segment, Sidebar } from 'semantic-ui-react'
 import AppSideMenu from './AppSideMenu'
 import AppRouter from './AppRouter'
+import { appMenus } from '../config'
 
 export default class AppContent extends Component {
   render() {
-    const menus = [
-      {
-        name: 'User Management',
-        items: [
-          {
-            name: 'User Management',
-            icon: 'users',
-            action: '/user'
-          },
-          {
-            name: 'User Management',
-            icon: 'users',
-            action: '/user'
-          }
-        ]
-      },
-      {
-        name: 'User Management',
-        items: [
-          {
-            name: 'User Management',
-            icon: 'users',
-            action: '/user'
-          },
-          {
-            name: 'User Management',
-            icon: 'users',
-            action: '/user'
-          }
-        ]
-      }
-    ]
 
     return (
       <Sidebar.Pushable as={Segment}>
@@ -45,7 +14,7 @@ export default class AppContent extends Component {
           direction='left'
           visible={this.props.visible}
         >
-          <AppSideMenu menus={menus} />
+          <AppSideMenu menus={appMenus} />
         </Sidebar>
 
         <Sidebar.Pusher className={this.props.contentClassName}>

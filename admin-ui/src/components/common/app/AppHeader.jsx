@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { Button, Dropdown, Menu, Icon} from 'semantic-ui-react'
+import { Dropdown, Menu, Icon } from 'semantic-ui-react'
 import { withRouter } from 'react-router-dom'
 import { injectIntl } from 'react-intl'
 import { withIntlContext } from '../context'
+import { LOGIN_USER, logout } from '../../../utils/Auth'
 
 class AppHeader extends Component {
-  state = { 
+  state = {
     activeItem: 'home',
     color: 'blue'
   }
@@ -27,6 +28,12 @@ class AppHeader extends Component {
     this.props.handleSidebar();
   }
 
+  logout = () => {
+    logout().then(() => {
+      this.props.history.push('/')
+    })
+  }
+
   render() {
     const { activeItem, color } = this.state
     return (
@@ -38,26 +45,38 @@ class AppHeader extends Component {
           name='home'
           active={activeItem === 'home'}
           onClick={this.handleItemClick}>
-          <Icon name='home'/>{this.props.intl.formatMessage({id: 'app-name'})}
+          <Icon name='home' />{this.props.intl.formatMessage({ id: 'app-name' })}
         </Menu.Item>
 
         <Menu.Menu color={color} position='right'>
-          <Dropdown item text={this.props.intl.formatMessage({id: 'lang'})}>
+          <Dropdown item trigger={
+            <span>
+              <Icon name='world' />{this.props.intl.formatMessage({ id: 'lang' })}
+            </span>
+          }>
             <Dropdown.Menu>
-              <Dropdown.Item onClick={() => this.changeLang('zh')} 
+              <Dropdown.Item onClick={() => this.changeLang('zh')}
                 active={this.intlCtx().lang === 'zh'}>
-                {this.props.intl.formatMessage({id: 'zh'})}
+                {this.props.intl.formatMessage({ id: 'zh' })}
               </Dropdown.Item>
-              <Dropdown.Item onClick={() => this.changeLang('en')} 
+              <Dropdown.Item onClick={() => this.changeLang('en')}
                 active={this.intlCtx().lang === 'en'}>
-                {this.props.intl.formatMessage({id: 'en'})}
+                {this.props.intl.formatMessage({ id: 'en' })}
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
 
-          <Menu.Item>
-            <Button color={color}>Sign Up</Button>
-          </Menu.Item>
+          <Dropdown item trigger={
+            <span>
+              <Icon name='user' />{localStorage.getItem(LOGIN_USER)}
+            </span>
+          }>
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={this.logout}>
+                {this.props.intl.formatMessage({ id: 'Logout' })}
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </Menu.Menu>
       </Menu>
     )

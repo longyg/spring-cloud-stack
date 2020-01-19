@@ -39,26 +39,26 @@ class FormDialog extends Component {
         })
     }
 
-    formClass = (config) => {
-        let className = 'custom-form-input-full'
-        switch (config.formColumns) {
-            case 1:
-                className = 'custom-form-input-full'
-                break
-            case 2:
-                className = 'custom-form-input-half'
-                break
-            case 3:
-                className = 'custom-form-input-one-third'
-                break
-            case 4:
-                className = 'custom-form-input-quarter'
-                break
-            default:
-                break
-        }
-        return className
-    }
+    // formClass = (config) => {
+    //     let className = 'custom-form-input-full'
+    //     switch (config.formColumns) {
+    //         case 1:
+    //             className = 'custom-form-input-full'
+    //             break
+    //         case 2:
+    //             className = 'custom-form-input-half'
+    //             break
+    //         case 3:
+    //             className = 'custom-form-input-one-third'
+    //             break
+    //         case 4:
+    //             className = 'custom-form-input-quarter'
+    //             break
+    //         default:
+    //             break
+    //     }
+    //     return className
+    // }
 
     textInputChange = (e, data, formConfig) => {
         const { field, required, requiredText } = formConfig
@@ -92,7 +92,7 @@ class FormDialog extends Component {
             <Form.Input key={`form-input-${index}`} error={error} required={required}
                 label={this.props.intl.formatMessage({ id: label })}
                 placeholder={placeholder}
-                className={this.formClass(config)}
+                // className={this.formClass(config)}
                 defaultValue={value}
                 onChange={(e, data) => this.textInputChange(e, data, formConfig)}
                 type={type}
@@ -115,7 +115,7 @@ class FormDialog extends Component {
                 )
             }
             formGroups.push(
-                <Form.Group key={`form-group-${i}`}>
+                <Form.Group key={`form-group-${i}`} widths='equal'>
                     {formInputs}
                 </Form.Group>
             )

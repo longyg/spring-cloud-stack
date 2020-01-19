@@ -1,65 +1,99 @@
 import React, { Component } from 'react'
-import { Menu, Dropdown, Segment, Button, Form } from 'semantic-ui-react'
+import { Menu, Dropdown, Button, Form, Icon } from 'semantic-ui-react'
 import { injectIntl } from 'react-intl'
 import { withIntlContext } from '../context'
 import './login.css'
+import * as Auth from '../../../utils/Auth'
+import { withRouter } from 'react-router-dom'
+import TipMessage from '../TipMessage'
+import { withTipContext } from '../context'
 
 class Login extends Component {
 
-    login = (e, data) => {
-        const { username, password } = data
-        console.log(username, password)
+    state = {
+        formLoading: false,
+        username: '',
+        password: '',
+        usernameError: false,
+        passwordError: false
+    }
+
+    errMsgs = {
+        username: 'User Name is mandatory',
+        password: 'Password is mandatory'
+    }
+
+    handleChange = (e, { name, value }) => {
+        let errAttr = name + 'Error'
+        if (!value || value === '') {
+            this.setState({
+                [errAttr]: this.errMsgs[name],
+                [name]: value
+            })
+        } else {
+            this.setState({
+                [errAttr]: false,
+                [name]: value
+            })
+        }
+
+    }
+
+    handleSubmit = () => {
+        const { username, password } = this.state
+        let userErr = false
+        let passErr = false
+        if (!username || username === '') {
+            userErr = this.errMsgs.username
+        }
+        if (!password || password === '') {
+            passErr = this.errMsgs.password
+        }
+        if (userErr || passErr) {
+            this.setState({
+                usernameError: userErr,
+                passwordError: passErr
+            })
+            return
+        }
+        this.login(username, password)
+    }
+
+    login = (username, password) => {
+        Auth.login(username, password).then(res => {
+            this.tipCtx().showTip('Login successfully, will redirect to homepage automatically', 'green', 'check circle', false, true)
+            setTimeout(() => {
+                this.props.history.push('/a/home')
+            }, 2000)
+        }).catch(err => {
+            this.tipCtx().showTip('Login failed: ' + JSON.stringify(err), 'red', 'x', false, true)
+        })
     }
 
     intlCtx = () => {
         return this.props.intlCtx
     }
 
+    tipCtx = () => {
+        return this.props.tipCtx
+    }
+
     changeLang = (lang) => {
         this.intlCtx().changeLang(lang)
     }
 
-    formDefs = [
-        {
-            label: 'login.username', field: 'username', placeholder: 'User Name',
-            required: true, requiredText: 'User Name is mandatory'
-        },
-        {
-            label: 'login.password', field: 'password', placeholder: 'Password',
-            type: 'password',
-            required: true, requiredText: 'Password is mandatory'
-        }
-    ]
-
-    loginFormConfig = {
-        headerText: 'LoginSystem',
-        formColumns: 1,
-        forms: this.formDefs,
-        actions: [
-            {
-                text: 'Login',
-                color: 'blue',
-                onClick: this.login,
-                checkRequired: true,
-                clearForm: true,
-                icon: {
-                    name: 'sign-in',
-                    position: 'right'
-                }
-            }
-        ]
-    }
-
-
-
     render() {
-        console.log('login')
+        const { username, password, usernameError, passwordError, formLoading } = this.state
         return (
             <div>
                 <div className='login-menu'>
                     <Menu secondary>
                         <Menu.Menu position='right'>
-                            <Dropdown item text={this.props.intl.formatMessage({ id: 'lang' })}>
+                            <Dropdown item trigger={
+                                <span>
+                                    <Icon name='world' />{this.props.intl.formatMessage({ id: 'lang' })}
+                                </span>
+                            }>
                                 <Dropdown.Menu>
                                     <Dropdown.Item onClick={() => this.changeLang('zh')}
                                         active={this.intlCtx().lang === 'zh'}>
@@ -73,33 +107,47 @@ class Login extends Component {
                             </Dropdown>
                         </Menu.Menu>
                     </Menu>
+                    <div className='login-tip'>
+                        <TipMessage />
+                    </div>
                 </div>
+
                 <div className='login-bg'>
                     <div className='login-form'>
                         <div className='login-form-header'>
                             {this.props.intl.formatMessage({ id: 'LoginSystem' })}
                         </div>
                         <div className='login-form-content'>
-                            <Form onSubmit={this.login}>
+                            <Form loading={formLoading}>
                                 <Form.Group>
-                                    <Form.Input required={true}
+                                    <Form.Input error={usernameError} required={true}
                                         label={this.props.intl.formatMessage({ id: 'login.username' })}
                                         placeholder='User Name'
                                         className='custom-form-input-full'
+                                        name='username'
+                                        value={username}
+                                        onChange={this.handleChange}
                                     />
                                 </Form.Group>
                                 <Form.Group>
-                                    <Form.Input required={true}
+                                    <Form.Input error={passwordError} required={true}
                                         label={this.props.intl.formatMessage({ id: 'login.password' })}
                                         placeholder='Password'
                                         type='password'
                                         className='custom-form-input-full'
+                                        name='password'
+                                        value={password}
+                                        onChange={this.handleChange}
+                                        autoComplete="on"
                                     />
                                 </Form.Group>
-                                <Button type='submit'>
-                                    {this.props.intl.formatMessage({ id: 'Login' })}
-                                </Button>
                             </Form>
+                        </div>
+                        <div className='login-form-action'>
+                            <Button onClick={this.handleSubmit} color='blue'
+                                icon='sign-in' labelPosition='right'
+                                content={this.props.intl.formatMessage({ id: 'Login' })}>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -108,4 +156,4 @@ class Login extends Component {
     }
 }
 
-export default withIntlContext(injectIntl(Login))
+export default withRouter(withTipContext(withIntlContext(injectIntl(Login))))

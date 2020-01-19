@@ -20,8 +20,10 @@ const zh_CN = {
     // 登录
     "LoginSystem": "登录系统",
     "Login": "登录",
+    "Logout": "退出登录",
     "login.username": "用户名",
     "login.password": "密码",
+
 
     "lang": "选择语言",
     "zh": "中文",

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom';
 import App from './App';
-import { authentication } from './utils/Auth'
 import NotFound from './components/common/app/NotFound'
 import Login from './components/common/user/Login'
+import { LOGIN_USER } from './utils/Auth'
 
 export default class Page extends Component {
     
@@ -25,7 +25,7 @@ export default class Page extends Component {
 }
 
 const PrivateRoute = ({component: Component, ...rest}) => {
-    return authentication.authenticated ? 
+    return localStorage.getItem(LOGIN_USER) ? 
         <Route {...rest} render={props => <Component {...rest} {...props}/>} />
         :
         <Redirect to='/login' />

@@ -21,8 +21,8 @@ eureka:
   client:
     registerWithEureka: true # 注册到Eureka，可以让Spring Boot Admin对其监控
     fetchRegistry: false
-    serviceUri:
-      defaultZone: http://localhost:8761/eureka
+    serviceUrl:
+      defaultZone: http://10.131.98.87:30010/eureka
 
 management:
   endpoints:

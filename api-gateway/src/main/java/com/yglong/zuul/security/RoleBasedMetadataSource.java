@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
@@ -37,10 +38,17 @@ public class RoleBasedMetadataSource implements FilterInvocationSecurityMetadata
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
         // 得到请求url
-        String requestUrl = ((FilterInvocation) o).getRequestUrl();
+        FilterInvocation fi = (FilterInvocation) o;
+        String requestUrl = fi.getRequestUrl();
         logger.info("Requesting url: " + requestUrl);
+        logger.info("Request method: " + ((FilterInvocation) o).getHttpRequest().getMethod());
 
         if (isAnonymousAllowedUrl(requestUrl)) {
+            return SecurityConfig.createList("ROLE_ANONYMOUS");
+        }
+
+        // 浏览器发送的options请求，不会带上Authorization请求头，因此必须忽略options请求的权限检查
+        if (fi.getHttpRequest().getMethod().equals(HttpMethod.OPTIONS.name())) {
             return SecurityConfig.createList("ROLE_ANONYMOUS");
         }
 
