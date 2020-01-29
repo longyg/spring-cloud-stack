@@ -1,13 +1,13 @@
 package com.yglong.gateway.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.util.pattern.PathPatternParser;
 
-@Configuration
+// 通过配置文件设置了CORS，因此取消Java Config配置方法
+//@Configuration
 public class CorsConfig {
 //    @Bean
     public CorsWebFilter corsFilter() {

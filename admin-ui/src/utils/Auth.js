@@ -6,7 +6,7 @@ export const ACCESS_TOKEN = 'accessToken'
 export const REFRESH_TOKEN = 'refreshToken'
 export const LOGIN_USER = 'loginUser'
 
-const getLoginUser = () => {
+export const getLoginUser = () => {
     return Http.get('/authservice/user/me').then(res => {
         localStorage.setItem(LOGIN_USER, res.data)
         return Promise.resolve({

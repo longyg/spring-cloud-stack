@@ -12,10 +12,22 @@ const en_US = {
     "Address": "Address",
     "Username": "User Name",
     "Password": "Password",
+    "Role": "Role",
     "AddUser": "Add User",
     "EditUser": "Edit User",
+    "BindRoles": "Bind Roles",
     "Cancel": "Cancel",
     "Save": "Save",
+
+    // 角色管理
+    "RoleManagement": "Role Management",
+    "AddRole": "Add Role",
+
+    // 资源管理
+    "ResourceManagement": "Resource Management",
+    "AddResource": "Add Resource",
+    "EditResource": "Edit Resource",
+    "URL": "URL",
 
     // 登录
     "LoginSystem": "Login to System",

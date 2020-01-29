@@ -20,7 +20,7 @@ export const appMenus = [
             {
                 name: 'Resource Management',
                 icon: 'record',
-                action: '/resource'
+                action: '/a/resource'
             }
         ]
     }

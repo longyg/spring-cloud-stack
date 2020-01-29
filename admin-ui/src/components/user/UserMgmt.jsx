@@ -1,20 +1,69 @@
 import React, { Component } from 'react';
-import { Segment, Header } from 'semantic-ui-react';
+import { Segment, Header, Button, Icon } from 'semantic-ui-react';
 import Http from '../../utils/Request'
-import DataTable from '../common/table/DataTable';
 import { injectIntl } from 'react-intl'
 import FormDialog from '../common/form/FormDialog';
 import { withTipContext } from '../common/context'
 import TipMessage from '../common/TipMessage'
-import BindRoleDialog from './BindRoleDialog'
+import { AgGridReact } from 'ag-grid-react'
+import ActionCellRenderer from './ActionCellRenderer'
 import * as ld from 'lodash'
 
-class UserManagement extends Component {
-    state = {
-        data: [],
-        loading: true,
-        isModalOpen: false,
-        isEditModalOpen: false
+class UserMgmt extends Component {
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            users: [],
+            loading: true,
+            isModalOpen: false,
+            isEditModalOpen: false
+        }
+
+        this.columnDefs = [
+            {
+                headerName: props.intl.formatMessage({ id: 'Name' }),
+                field: 'name', checkboxSelection: true, headerCheckboxSelection: true
+            },
+            { headerName: props.intl.formatMessage({ id: 'Address' }), field: 'address' },
+            { headerName: props.intl.formatMessage({ id: 'Username' }), field: 'username' },
+            { headerName: props.intl.formatMessage({ id: 'Role' }), field: 'roles', cellRenderer: 'roleRenderer' },
+            {
+                headerName: props.intl.formatMessage({ id: 'table-operation-title' }),
+                cellRenderer: 'actionCellRenderer', width: 260
+            }
+        ]
+
+        this.gridOptions = {
+            columnDefs: this.columnDefs,
+            rowSelection: 'multiple',
+            suppressCellSelection: true,
+            paginationAutoPageSize: true,
+            animateRows: true,
+            pagination: true,
+            context: {
+                parentComp: this
+            },
+            frameworkComponents: {
+                actionCellRenderer: ActionCellRenderer,
+                roleRenderer: (props) => {
+                    let roles = []
+                    props.data.roles.forEach(role => {
+                        roles.push(role.name)
+                    })
+                    let rolestr = ld.join(roles, ', ')
+                    return (
+                        <div>
+                            {rolestr}
+                        </div>
+                    )
+                }
+            },
+            defaultColDef: {
+                sortable: true,
+                filter: true
+            }
+        }
     }
 
     componentDidMount = () => {
@@ -25,10 +74,16 @@ class UserManagement extends Component {
         return this.props.tipCtx
     }
 
+    gridReady = (params) => {
+        this.gridApi = params.api
+        this.gridColumnApi = params.columnApi
+        this.gridApi.sizeColumnsToFit()
+    }
+
     fetchData = () => {
         Http.get('/userservice/user').then(res => {
             this.setState({
-                data: res.data,
+                users: res.data,
                 loading: false
             })
         })
@@ -40,18 +95,11 @@ class UserManagement extends Component {
         })
     }
 
-    openEditUserModal = (e, rowData) => {
+    openEditUserModal = (rowData) => {
         let editFormConfig = this.setFormConfig(this.editFormConfig, rowData)
         this.setState({
             editFormConfig: editFormConfig,
             isEditModalOpen: true
-        })
-    }
-
-    openBindRoleModal = (e, rowData) => {
-        this.setState({
-            bindUser: rowData,
-            isBindRoleOpen: true
         })
     }
 
@@ -67,27 +115,22 @@ class UserManagement extends Component {
         return config
     }
 
-    delete = (data) => {
-        let toDel = []
-        data.forEach(item => {
-            if (item.checked) {
-                toDel.push(item.data)
-            }
-        })
+    delete = () => {
+        let toDel = this.gridApi.getSelectedRows()
         if (toDel.length < 1) {
             this.tipCtx().showNoRowSelectedTip()
             return
         }
-        this.deleteData(toDel)
+        this.deleteUsers(toDel)
     }
 
-    deleteRow = (e, rowData) => {
+    deleteRow = (rowData) => {
         let toDel = []
-        toDel.push(rowData.data)
-        this.deleteData(toDel)
+        toDel.push(rowData)
+        this.deleteUsers(toDel)
     }
 
-    deleteData = (toDel) => {
+    deleteUsers = (toDel) => {
         this.tipCtx().showDeletingTip()
         Http.delete('/userservice/user', {
             data: toDel
@@ -165,92 +208,8 @@ class UserManagement extends Component {
         })
     }
 
-    bindRoles = (params) => {
-        let user = params.data.data
-        user.roles = params.selectedRoles
-
-        this.setState({
-            isBindRoleOpen: false
-        }, () => {
-            this.tipCtx().showSavingTip()
-        })
-
-        Http.put('/userservice/user/role', user).then(res => {
-            this.tipCtx().showSavedTip()
-            this.fetchData()
-        }).catch(err => {
-            this.tipCtx().showErrorTip(err)
-        })
-    }
-
-    closeBindRoleModel = () => {
-        this.setState({
-            isBindRoleOpen: false
-        })
-    }
-
-    tableConfig = {
-        // 是否显示checkbox列
-        checkboxColumn: true,
-
-        // 数据列定义
-        columnDefs: [
-            { name: 'Name', field: 'name' },
-            { name: 'Address', field: 'address' },
-            { name: 'Username', field: 'username' },
-            {
-                name: 'Role', field: 'roles', cellRenderer: (params) => {
-                    let roles = []
-                    params.forEach(role => {
-                        roles.push(role.name)
-                    })
-                    let rolestr = ld.join(roles, ', ')
-                    return (
-                        <div>
-                            {rolestr}
-                        </div>
-                    )
-                }
-            }
-        ],
-
-        // 操作列定义
-        rowActions: [
-            {
-                icon: 'edit',
-                iconColor: 'blue',
-                text: 'Edit',
-                onClick: this.openEditUserModal
-            },
-            {
-                icon: 'delete',
-                iconColor: 'red',
-                text: 'Delete',
-                onClick: this.deleteRow
-            },
-            {
-                icon: 'user outline',
-                iconColor: 'purple',
-                text: 'BindRoles',
-                onClick: this.openBindRoleModal
-            }
-        ],
-
-        // 表头操作定义
-        headerActions: [
-            {
-                icon: 'add',
-                iconColor: 'green',
-                text: 'Add',
-                onClick: this.openAddUserModal
-            },
-            {
-                icon: 'delete',
-                iconColor: 'red',
-                text: 'Delete',
-                onClick: this.delete
-            }
-        ]
+    bindRoles = (data) => {
+        console.log(data)
     }
 
     formDefs = [
@@ -321,7 +280,7 @@ class UserManagement extends Component {
     }
 
     render() {
-        const { data, loading } = this.state
+        const { users, loading } = this.state
         return (
             <Segment.Group raised>
                 <Segment>
@@ -332,8 +291,25 @@ class UserManagement extends Component {
                     {/* {this.tipMessage()} */}
                     <TipMessage />
 
+                    <div className='header-actions'>
+                        <Button basic size='tiny' onClick={this.openAddUserModal}>
+                            <Icon color='green' name='add' />
+                            {this.props.intl.formatMessage({ id: 'Add' })}
+                        </Button>
+                        <Button basic size='tiny' onClick={this.delete}>
+                            <Icon color='red' name='delete' />
+                            {this.props.intl.formatMessage({ id: 'Delete' })}
+                        </Button>
+                    </div>
+
                     {/* 数据表格 */}
-                    <DataTable config={this.tableConfig} data={data} />
+                    <div style={{ height: 'calc(100vh - 370px)', minHeight: '353px' }} className='ag-theme-material'>
+                        <AgGridReact
+                            onGridReady={this.gridReady}
+                            gridOptions={this.gridOptions}
+                            rowData={users}
+                        />
+                    </div>
                 </Segment>
 
                 {/* 添加用户弹出框 */}
@@ -341,13 +317,9 @@ class UserManagement extends Component {
 
                 {/* 编辑用户弹出框 */}
                 <FormDialog size='tiny' isOpen={this.state.isEditModalOpen} config={this.state.editFormConfig} />
-
-                {/* 绑定角色弹出框 */}
-                <BindRoleDialog size='small' rowData={this.state.bindUser} isOpen={this.state.isBindRoleOpen}
-                    onClose={this.closeBindRoleModel} onSave={this.bindRoles} />
             </Segment.Group>
         )
     }
 }
 
-export default injectIntl(withTipContext(UserManagement))
+export default injectIntl(withTipContext(UserMgmt))

@@ -9,6 +9,9 @@ import { IntlContextProvider, TipContextProvider, IntlContext } from './componen
 import { IntlProvider } from 'react-intl';
 import zh_CN from './utils/locale/zh_CN';
 import en_US from './utils/locale/en_US';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-material.css';
+import './css/custom-ag-grid.css'
 
 const messages = {
     'zh': zh_CN,

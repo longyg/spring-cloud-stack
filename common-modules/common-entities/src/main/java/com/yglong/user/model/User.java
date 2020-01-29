@@ -10,7 +10,7 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 public class User {
-    @ApiModelProperty(value = "ID")
+    @ApiModelProperty(value = "用户ID")
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(updatable = false, nullable = false)

@@ -18,7 +18,7 @@ export default class AppContent extends Component {
         </Sidebar>
 
         <Sidebar.Pusher className={this.props.contentClassName}>
-          <div style={{height: 'calc(100vh - 94px)', width: '100%',  background: 'rgba(211, 210, 210, 0.1)'}}>
+          <div style={{height: 'calc(100vh - 88px)', width: '100%',  background: 'rgba(211, 210, 210, 0.1)'}}>
               <AppRouter />
           </div>
         </Sidebar.Pusher>

@@ -5,19 +5,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 @ApiModel(description = "角色类")
 @Entity
 @Table(name = "role")
 public class Role {
-    public Role() {
-
-    }
-    public Role(String name) {
-        this.name = name;
-    }
-
     @ApiModelProperty(value = "角色ID")
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -32,6 +26,11 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     @JsonIgnore
     private Set<User> users;
+
+    @ApiModelProperty(value = "角色可访问资源")
+    @ManyToMany(mappedBy = "roles")
+    @JsonIgnore
+    private Set<Resource> resources;
 
     public Long getId() {
         return id;
@@ -55,5 +54,18 @@ public class Role {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Role role = (Role) o;
+        return name.equals(role.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

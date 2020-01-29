@@ -20,6 +20,14 @@
     width: 100%;
 }
 
+.login-success-dialog {
+    padding: 1.25rem 1.5rem;
+}
+
+.login-success-dialog .info {
+    margin: 1.25rem auto;
+}
+
 .login-tip {
     width: 428px;
     margin: 10px auto;

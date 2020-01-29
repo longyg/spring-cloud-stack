@@ -12,10 +12,22 @@ const zh_CN = {
     "Address": "地址",
     "Username": "登录用户名",
     "Password": "密码",
+    "Role": "角色",
     "AddUser": "添加用户",
     "EditUser": "修改用户",
+    "BindRoles": "绑定角色",
     "Cancel": "取消",
     "Save": "保存",
+
+    // 角色管理
+    "RoleManagement": "角色管理",
+    "AddRole": "添加角色",
+
+    // 资源管理
+    "ResourceManagement": "资源管理",
+    "AddResource": "添加资源",
+    "EditResource": "修改资源",
+    "URL": "资源URL",
 
     // 登录
     "LoginSystem": "登录系统",

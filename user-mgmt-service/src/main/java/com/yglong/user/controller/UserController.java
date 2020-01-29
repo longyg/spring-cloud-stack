@@ -1,16 +1,12 @@
 package com.yglong.user.controller;
 
-import com.yglong.user.model.Resource;
-import com.yglong.user.model.Response;
 import com.yglong.user.model.User;
-import com.yglong.user.service.ResourceService;
 import com.yglong.user.service.UserService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,9 +22,6 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private ResourceService resourceService;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @ApiOperation(value = "根据登录用户名获取用户信息")
@@ -38,13 +31,8 @@ public class UserController {
         return userService.getUser(username);
     }
 
-    @GetMapping(value = "/resources")
-    public List<Resource> getResources() {
-        return resourceService.getAllResources();
-    }
-
     @ApiOperation(value = "获取所有用户")
-    @ApiResponses({@ApiResponse(code = 200, message = "获取成功")})
+    @ApiResponses({@ApiResponse(code = 200, message = "获取成功", response = User[].class)})
     @GetMapping(value = "/user")
     public List<User> getUsers() {
         return userService.getAllUsers();
@@ -52,7 +40,7 @@ public class UserController {
 
     @ApiOperation(value = "添加用户")
     @ApiImplicitParam(value = "待添加用户对象", required = true, dataTypeClass = User.class)
-    @ApiResponses({@ApiResponse(code = 200, message = "添加成功", response = User.class)})
+    @ApiResponses({@ApiResponse(code = 200, message = "添加成功")})
     @PostMapping(value = "/user")
     public void addUser(@RequestBody User user) {
         User existUser = userService.getUser(user.getUsername());
@@ -90,5 +78,19 @@ public class UserController {
     @DeleteMapping(value = "/user")
     public void deleteUsers(@RequestBody List<User> users) {
         userService.deleteUsers(users);
+    }
+
+    @ApiOperation(value = "为用户绑定角色")
+    @ApiImplicitParam(value = "待绑定用户对象", required = true, dataTypeClass = User.class)
+    @ApiResponses({@ApiResponse(code = 200, message = "绑定成功")})
+    @PutMapping(value = "/user/role")
+    public void bindRoles(@RequestBody User user) {
+        User existUser = userService.getUser(user.getUsername());
+        if (existUser == null) {
+            logger.error(String.format("The username {%s} does not exist", user.getUsername()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("The username {%s} does not exist", user.getUsername()));
+        }
+        existUser.setRoles(user.getRoles());
+        userService.saveUser(existUser);
     }
 }

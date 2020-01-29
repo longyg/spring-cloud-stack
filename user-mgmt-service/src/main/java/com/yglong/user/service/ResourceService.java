@@ -16,7 +16,19 @@ public class ResourceService {
         return resourceRepository.findAll();
     }
 
-    public void addResources(List<Resource> resources) {
-        resourceRepository.saveAll(resources);
+    public Resource getResource(String url) {
+        return resourceRepository.findByUrl(url);
+    }
+
+    public void addResource(Resource resource) {
+        resourceRepository.save(resource);
+    }
+
+    public void updateResource(Resource resource) {
+        resourceRepository.save(resource);
+    }
+
+    public void deleteResources(List<Resource> resources) {
+        resourceRepository.deleteAll(resources);
     }
 }

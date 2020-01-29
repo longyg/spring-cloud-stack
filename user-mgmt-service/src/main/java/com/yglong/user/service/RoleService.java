@@ -12,7 +12,19 @@ public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public void addRoles(List<Role> roles) {
-        roleRepository.saveAll(roles);
+    public void addRole(Role role) {
+        roleRepository.save(role);
+    }
+
+    public Role getRole(String name) {
+        return roleRepository.findByName(name);
+    }
+
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll();
+    }
+
+    public void deleteRoles(List<Role> roles) {
+        roleRepository.deleteAll(roles);
     }
 }

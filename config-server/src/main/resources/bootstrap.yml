@@ -3,4 +3,4 @@ spring:
     config:
       server:
         encrypt:
-          enabled: false # 禁用服务端解密
+          enabled: false # 禁用服务端解密，需要在config server和config client服务设置ENCRPYT_KEY环境变量

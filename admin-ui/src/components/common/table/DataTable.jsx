@@ -240,8 +240,16 @@ class DataTable extends Component {
 
     config.columnDefs.forEach((cell) => {
       const field = cell['field']
+      let cellRender = cell.hasOwnProperty('cellRenderer')
+      let cellContent
+      if (cellRender) {
+        let cellRenderer = cell['cellRenderer']
+        cellContent = cellRenderer(item.data[field])
+      } else {
+        cellContent = item.data[field]
+      }
       rowCells.push(
-        <Table.Cell key={`cell-${item.rowIndex}-${cellIndex}`}>{item.data[field]}</Table.Cell>
+        <Table.Cell key={`cell-${item.rowIndex}-${cellIndex}`}>{cellContent}</Table.Cell>
       )
       cellIndex++
     })

@@ -39,27 +39,6 @@ class FormDialog extends Component {
         })
     }
 
-    // formClass = (config) => {
-    //     let className = 'custom-form-input-full'
-    //     switch (config.formColumns) {
-    //         case 1:
-    //             className = 'custom-form-input-full'
-    //             break
-    //         case 2:
-    //             className = 'custom-form-input-half'
-    //             break
-    //         case 3:
-    //             className = 'custom-form-input-one-third'
-    //             break
-    //         case 4:
-    //             className = 'custom-form-input-quarter'
-    //             break
-    //         default:
-    //             break
-    //     }
-    //     return className
-    // }
-
     textInputChange = (e, data, formConfig) => {
         const { field, required, requiredText } = formConfig
         let errorState

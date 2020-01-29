@@ -9,7 +9,7 @@ import TipMessage from '../common/TipMessage'
 import BindRoleDialog from './BindRoleDialog'
 import * as ld from 'lodash'
 
-class UserManagement extends Component {
+class ResourceMgmt extends Component {
     state = {
         data: [],
         loading: true,
@@ -26,7 +26,7 @@ class UserManagement extends Component {
     }
 
     fetchData = () => {
-        Http.get('/userservice/user').then(res => {
+        Http.get('/userservice/resource').then(res => {
             this.setState({
                 data: res.data,
                 loading: false
@@ -34,13 +34,13 @@ class UserManagement extends Component {
         })
     }
 
-    openAddUserModal = () => {
+    openAddModal = () => {
         this.setState({
             isModalOpen: true
         })
     }
 
-    openEditUserModal = (e, rowData) => {
+    openEditModal = (e, rowData) => {
         let editFormConfig = this.setFormConfig(this.editFormConfig, rowData)
         this.setState({
             editFormConfig: editFormConfig,
@@ -50,7 +50,7 @@ class UserManagement extends Component {
 
     openBindRoleModal = (e, rowData) => {
         this.setState({
-            bindUser: rowData,
+            bindData: rowData,
             isBindRoleOpen: true
         })
     }
@@ -89,7 +89,7 @@ class UserManagement extends Component {
 
     deleteData = (toDel) => {
         this.tipCtx().showDeletingTip()
-        Http.delete('/userservice/user', {
+        Http.delete('/userservice/resource', {
             data: toDel
         }).then(res => {
             this.tipCtx().showDeletedTip()
@@ -99,14 +99,12 @@ class UserManagement extends Component {
         })
     }
 
-    addUser = (e, data) => {
-        const { username, password, name, address } = data
+    add = (e, data) => {
+        const { url, name } = data
 
-        const user = {
-            name: name ? name.value : '',
-            address: address ? address.value : '',
-            username: username ? username.value : '',
-            password: password ? password.value : ''
+        const obj = {
+            url: url ? url.value : '',
+            name: name ? name.value : ''
         }
 
         this.setState({
@@ -115,7 +113,7 @@ class UserManagement extends Component {
             this.tipCtx().showSavingTip()
         })
 
-        Http.post('/userservice/user', user).then(res => {
+        Http.post('/userservice/resource', obj).then(res => {
             this.tipCtx().showSavedTip()
             this.fetchData()
         }).catch(err => {
@@ -129,20 +127,18 @@ class UserManagement extends Component {
         })
     }
 
-    editUser = (e, data, config) => {
-        const { username, password, name, address } = data
+    edit = (e, data, config) => {
+        const { url, name } = data
 
         if (!config.rowData || !config.rowData.data) {
             return
         }
 
         const id = config.rowData.data.id
-        let user = {
+        let obj = {
             id: id,
-            name: name ? name.value : '',
-            address: address ? address.value : '',
-            username: username ? username.value : '',
-            password: password ? password.value : ''
+            url: url ? url.value : '',
+            name: name ? name.value : ''
         }
 
         this.setState({
@@ -151,7 +147,7 @@ class UserManagement extends Component {
             this.tipCtx().showSavingTip()
         })
 
-        Http.put('/userservice/user', user).then(res => {
+        Http.put('/userservice/resource', obj).then(res => {
             this.tipCtx().showSavedTip()
             this.fetchData()
         }).catch(err => {
@@ -166,8 +162,8 @@ class UserManagement extends Component {
     }
 
     bindRoles = (params) => {
-        let user = params.data.data
-        user.roles = params.selectedRoles
+        let data = params.data.data
+        data.roles = params.selectedRoles
 
         this.setState({
             isBindRoleOpen: false
@@ -175,7 +171,7 @@ class UserManagement extends Component {
             this.tipCtx().showSavingTip()
         })
 
-        Http.put('/userservice/user/role', user).then(res => {
+        Http.put('/userservice/resource/role', data).then(res => {
             this.tipCtx().showSavedTip()
             this.fetchData()
         }).catch(err => {
@@ -195,9 +191,8 @@ class UserManagement extends Component {
 
         // 数据列定义
         columnDefs: [
+            { name: 'URL', field: 'url' },
             { name: 'Name', field: 'name' },
-            { name: 'Address', field: 'address' },
-            { name: 'Username', field: 'username' },
             {
                 name: 'Role', field: 'roles', cellRenderer: (params) => {
                     let roles = []
@@ -220,7 +215,7 @@ class UserManagement extends Component {
                 icon: 'edit',
                 iconColor: 'blue',
                 text: 'Edit',
-                onClick: this.openEditUserModal
+                onClick: this.openEditModal
             },
             {
                 icon: 'delete',
@@ -242,7 +237,7 @@ class UserManagement extends Component {
                 icon: 'add',
                 iconColor: 'green',
                 text: 'Add',
-                onClick: this.openAddUserModal
+                onClick: this.openAddModal
             },
             {
                 icon: 'delete',
@@ -255,25 +250,18 @@ class UserManagement extends Component {
 
     formDefs = [
         {
-            label: 'Username', field: 'username', placeholder: 'User Name',
-            required: true, requiredText: 'User Name is mandatory'
+            label: 'URL', field: 'url', placeholder: 'URL',
+            required: true, requiredText: 'URL is mandatory'
         },
         {
-            label: 'Password', field: 'password', placeholder: 'Password',
-            type: 'password',
-            required: true, requiredText: 'Password is mandatory'
-        },
-        {
-            label: 'Name', field: 'name', placeholder: 'Name'
-        },
-        {
-            label: 'Address', field: 'address', placeholder: 'Address'
+            label: 'Name', field: 'name', placeholder: 'Name',
+            required: true, requiredText: 'Name is mandatory'
         }
     ]
 
     addFormConfig = {
-        headerText: 'AddUser',
-        formColumns: 2,
+        headerText: 'AddResource',
+        formColumns: 1,
         forms: this.formDefs,
         actions: [
             {
@@ -284,7 +272,7 @@ class UserManagement extends Component {
             {
                 text: 'Save',
                 color: 'green',
-                onClick: this.addUser,
+                onClick: this.add,
                 checkRequired: true,
                 clearForm: true,
                 icon: {
@@ -296,8 +284,8 @@ class UserManagement extends Component {
     }
 
     editFormConfig = {
-        headerText: 'EditUser',
-        formColumns: 2,
+        headerText: 'EditResource',
+        formColumns: 1,
         forms: this.formDefs,
         actions: [
             {
@@ -309,7 +297,7 @@ class UserManagement extends Component {
             {
                 text: 'Save',
                 color: 'green',
-                onClick: this.editUser,
+                onClick: this.edit,
                 checkRequired: true,
                 clearForm: true,
                 icon: {
@@ -325,7 +313,7 @@ class UserManagement extends Component {
         return (
             <Segment.Group raised>
                 <Segment>
-                    <Header as='h3'>{this.props.intl.formatMessage({ id: 'UserManagement' })}</Header>
+                    <Header as='h3'>{this.props.intl.formatMessage({ id: 'ResourceManagement' })}</Header>
                 </Segment>
                 <Segment loading={loading}>
                     {/* 提示消息 */}
@@ -336,18 +324,18 @@ class UserManagement extends Component {
                     <DataTable config={this.tableConfig} data={data} />
                 </Segment>
 
-                {/* 添加用户弹出框 */}
+                {/* 添加弹出框 */}
                 <FormDialog size='tiny' isOpen={this.state.isModalOpen} config={this.addFormConfig} />
 
-                {/* 编辑用户弹出框 */}
+                {/* 编辑弹出框 */}
                 <FormDialog size='tiny' isOpen={this.state.isEditModalOpen} config={this.state.editFormConfig} />
 
                 {/* 绑定角色弹出框 */}
-                <BindRoleDialog size='small' rowData={this.state.bindUser} isOpen={this.state.isBindRoleOpen}
+                <BindRoleDialog size='small' rowData={this.state.bindData} isOpen={this.state.isBindRoleOpen}
                     onClose={this.closeBindRoleModel} onSave={this.bindRoles} />
             </Segment.Group>
         )
     }
 }
 
-export default injectIntl(withTipContext(UserManagement))
+export default injectIntl(withTipContext(ResourceMgmt))

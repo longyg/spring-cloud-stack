@@ -61,6 +61,10 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.yglong.common</groupId>
+            <artifactId>common-entities</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
